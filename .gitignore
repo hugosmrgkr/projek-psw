@@ -24,11 +24,13 @@
 /backend/.vscode
 
 # === Frontend ===
-/frontend/node_modules
+# === Frontend ===
+# Mengabaikan folder dan file yang tidak perlu di-track oleh Git
+/frontend/node_modules/
 /frontend/.pnp
 /frontend/.pnp.js
-/frontend/coverage
-/frontend/build
+/frontend/coverage/
+/frontend/build/
 /frontend/.env.local
 /frontend/.env.development.local
 /frontend/.env.test.local
@@ -36,6 +38,12 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+
+# === Jangan Abaikan File Ini ===
+# Memastikan file-file yang diperlukan di-track oleh Git
+!/frontend/package.json
+!/frontend/README.md
+!/frontend/src/**
 
 # === Global ===
 .DS_Store
