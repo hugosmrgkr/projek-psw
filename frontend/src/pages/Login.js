@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -10,7 +10,7 @@ const Login = () => {
 
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate(); // Hook untuk navigasi
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -26,13 +26,8 @@ const Login = () => {
         setError('');
     
         try {
-            // Kirim data login ke backend
             const response = await axios.post('http://localhost:8000/api/login', formData);
-    
-            // Jika login berhasil, simpan token di localStorage
             localStorage.setItem('token', response.data.token);
-    
-            // Arahkan ke halaman dashboard
             navigate('/dashboard');
         } catch (err) {
             setLoading(false);
