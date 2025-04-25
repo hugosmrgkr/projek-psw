@@ -8,7 +8,7 @@ function Header() {
   // Fungsi untuk logout
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -145,13 +145,10 @@ function Header() {
                 <i className="ti-settings text-primary" />
                 Settings
               </a>
-              <form method="POST" action="/logout">
-                {/* Pastikan Anda handle logout di React */}
-                <button onClick={handleLogout} type="submit" className="dropdown-item">
-                  <i className="ti-power-off text-primary" />
-                  Logout
-                </button>
-              </form>
+              <button onClick={handleLogout} className="dropdown-item">
+                <i className="ti-power-off text-primary" />
+                Logout
+              </button>
             </div>
           </li>
         </ul>
