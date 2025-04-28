@@ -16,12 +16,12 @@ class AdminSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'username' => 'admin', // Username untuk admin
-            'email' => 'admin@gmail.com', // Email admin
-            'password' => Hash::make('admin123'), // Password yang sudah di-hash
-            'keterangan' => 'Admin', // Keterangan
-            'isDeleted' => 0, // Status isDeleted
-            'created_at' => now(), // Waktu dibuat
+            'username' => 'admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('admin123'),
+            'keterangan' => 'Admin',
+            'isDeleted' => 0,
+            'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
