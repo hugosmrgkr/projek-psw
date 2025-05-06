@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\User_;
+use App\Http\Controllers\Controller; // <-- tambah ini
 
 class AuthController extends Controller
 {
@@ -17,18 +17,18 @@ class AuthController extends Controller
         ]);
 
         // Cari user berdasarkan username dan pastikan tidak terhapus
-        $user = User::where('username', $request->username)
+        $user = User_::where('username', $request->username)
                     ->where('isDeleted', false)
                     ->first();
 
         // Cek jika user ditemukan dan password cocok
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password_)) {
             return response()->json([
                 'message' => 'Username atau Password salah'
             ], 401);
         }
 
-        // Hapus token lama jika ada (opsional jika menggunakan token manual)
+        // Buat token baru
         $user->token = bin2hex(random_bytes(40));
         $user->save();
 

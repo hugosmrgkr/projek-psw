@@ -13,10 +13,21 @@ class JenisPermohonanController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $data = JenisPermohonan::create($request->all());
-        return response()->json($data, 201);
-    }
+{
+    $validated = $request->validate([
+        'jenisPermohonan' => 'required|string|max:255',
+        'keterangan' => 'nullable|string',
+    ]);
+
+    $validated['parentId'] = null;
+    $validated['createAt'] = now();
+    $validated['updateAt'] = now();
+    $validated['isDeleted'] = 0;
+
+    return response()->json(JenisPermohonan::create($validated), 201);
+}
+
+
 
     public function show($id)
     {
