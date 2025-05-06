@@ -16,6 +16,12 @@ function Sidebar() {
             <span className="menu-title">Jenis Permohonan</span>
           </Link>
         </li>
+        <li className="nav-item">
+          <Link to="/jangka-waktu-sewa" className="nav-link">
+            <i className="mdi mdi-calendar-clock"></i>
+            <span className="menu-title">Jangka Waktu Sewa</span>
+          </Link>
+        </li>
       </ul>
     </nav>
   );

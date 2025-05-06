@@ -1,22 +1,27 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'; // Impor Outlet
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+
 import ListJenisPermohonan from './pages/JenisPermohonan/List';
 import CreateJenisPermohonan from './pages/JenisPermohonan/Create';
 import EditJenisPermohonan from './pages/JenisPermohonan/Edit';
-import ProtectedRoute from './components/ProtectedRoute';
+
+import JangkaWaktuSewaList from './pages/JangkaWaktuSewa/List';
+import JangkaWaktuSewaCreate from './pages/JangkaWaktuSewa/Create';
+import JangkaWaktuSewaEdit from './pages/JangkaWaktuSewa/Edit';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Route login */}
+        {/* Public route */}
         <Route path="/" element={<Login />} />
 
-        {/* Protected route untuk halaman dashboard dan halaman lainnya */}
+        {/* Protected routes */}
         <Route
           path="/"
           element={
@@ -26,9 +31,16 @@ function App() {
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
+
+          {/* Jenis Permohonan */}
           <Route path="jenis-permohonan" element={<ListJenisPermohonan />} />
           <Route path="jenis-permohonan/create" element={<CreateJenisPermohonan />} />
           <Route path="jenis-permohonan/edit/:id" element={<EditJenisPermohonan />} />
+
+          {/* Jangka Waktu Sewa */}
+          <Route path="jangka-waktu-sewa" element={<JangkaWaktuSewaList />} />
+          <Route path="jangka-waktu-sewa/create" element={<JangkaWaktuSewaCreate />} />
+          <Route path="jangka-waktu-sewa/edit/:id" element={<JangkaWaktuSewaEdit />} />
         </Route>
 
         {/* 404 Not Found */}
@@ -46,9 +58,8 @@ function DashboardLayout() {
         <Sidebar />
         <div className="main-panel">
           <div className="content-wrapper">
-            {/* Render halaman anak menggunakan outlet */}
             <React.Suspense fallback={<div>Loading...</div>}>
-              <Outlet /> {/* Ini akan merender halaman yang sesuai dengan rute anak */}
+              <Outlet />
             </React.Suspense>
           </div>
         </div>
