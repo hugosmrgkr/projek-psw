@@ -14,7 +14,7 @@ function Header() {
   return (
     <nav className="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a className="navbar-brand brand-logo mr-5" href="/">
+        <a className="navbar-brand brand-logo mr-5" href="#">
           <img
             src="/assets-admin/images/logo.svg"
             className="mr-2"
