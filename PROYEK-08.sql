@@ -24,15 +24,7 @@ INSERT INTO jenisPermohonan (idJenisPermohonan, parentId, jenisPermohonan, keter
 (9, NULL, 'Cadangan', 'Jenis permohonan tidak aktif', NOW(), NOW(), 1),
 (10, NULL, 'Khitanan Massal', 'Permohonan untuk kegiatan sosial', NOW(), NOW(), 0);
 
--- Create and populate userRole table
-CREATE TABLE userRole (
-    idUserRole INT PRIMARY KEY,
-    keterangan TEXT,
-    userRole VARCHAR(255),
-    createAt DATETIME,
-    updateAt DATETIME,
-    isDeleted BOOLEAN
-);
+
 
 INSERT INTO userRole (idUserRole, keterangan, userRole, createAt, updateAt, isDeleted) VALUES
 (1, 'Administrator sistem', 'Admin', NOW(), NOW(), 0),
@@ -719,3 +711,9 @@ WHERE o.luasBangunan > (
     FROM objekRetribusi o2
     WHERE o2.idLokasiObjekRetribusi = o.idLokasiObjekRetribusi
 );
+
+DESCRIBE user_;
+ALTER TABLE user_ MODIFY COLUMN userId INT NULL;
+ALTER TABLE user_ MODIFY COLUMN userId INT DEFAULT 1;
+DELETE FROM user_ WHERE userId = 1;
+	ALTER TABLE user_ AUTO_INCREMENT = 1;

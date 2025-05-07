@@ -10,19 +10,32 @@ class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        DB::table('users')->insert([
-            'username' => 'admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('admin123'),
-            'keterangan' => 'Admin',
-            'isDeleted' => 0,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Cek apakah sudah ada user admin
+        $existingUser = DB::table('user_')->where('email', 'admin@gmail.com')->first();
+
+        if (!$existingUser) {
+            // Menentukan userId unik
+            $userId = 1;
+            while (DB::table('user_')->where('userId', $userId)->exists()) {
+                $userId++;
+            }
+
+            DB::table('user_')->insert([
+                'userId' => $userId,
+                'idUserRole' => 1,
+                'idPersonal' => 1,
+                'username' => 'admin',
+                'email' => 'admin@gmail.com',
+                'password_' => Hash::make('admin123'),
+                'token' => null,
+                'keterangan' => 'Admin',
+                'isDeleted' => 0,
+                'createAt' => now(),
+                'updateAt' => now(),
+            ]);
+        }
     }
 }
