@@ -13,7 +13,7 @@ class AuthController extends Controller
         // Validasi input
         $request->validate([
             'username' => 'required|string',
-            'password' => 'required|string'
+            'password' => 'required|string' 
         ]);
 
         // Cari user berdasarkan username dan pastikan tidak terhapus
