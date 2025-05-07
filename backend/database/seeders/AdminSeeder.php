@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -9,37 +10,32 @@ class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // Cek apakah sudah ada user dengan email admin
+        // Cek apakah sudah ada user admin
         $existingUser = DB::table('user_')->where('email', 'admin@gmail.com')->first();
-    
-        // Jika belum ada, lakukan insert
+
         if (!$existingUser) {
-            // Tentukan userId dengan angka yang kamu inginkan, misalnya 1
+            // Menentukan userId unik
             $userId = 1;
-    
-            // Pastikan userId unik
             while (DB::table('user_')->where('userId', $userId)->exists()) {
                 $userId++;
             }
-    
+
             DB::table('user_')->insert([
-                'userId' => $userId,  // Gunakan userId yang sudah dicek keunikannya
-                'idUserRole' => 1,  // ID user role untuk admin
-                'idPersonal' => 1,  // ID personal sesuai dengan data yang ada
+                'userId' => $userId,
+                'idUserRole' => 1,
+                'idPersonal' => 1,
                 'username' => 'admin',
                 'email' => 'admin@gmail.com',
-                'password_' => Hash::make('admin123'), // Password di-hash dengan Bcrypt
-                'token' => null,  // Bisa kosong jika tidak diperlukan
+                'password_' => Hash::make('admin123'),
+                'token' => null,
                 'keterangan' => 'Admin',
-                'isDeleted' => 0,  // Status tidak dihapus
+                'isDeleted' => 0,
                 'createAt' => now(),
                 'updateAt' => now(),
             ]);
         }
     }
-    }
+}

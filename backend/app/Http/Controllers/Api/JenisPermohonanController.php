@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Models\JenisPermohonan;
@@ -9,42 +10,64 @@ class JenisPermohonanController extends Controller
 {
     public function index()
     {
-        return response()->json(JenisPermohonan::all());
+        // Ambil semua data yang belum dihapus (isDeleted = false)
+        return response()->json(
+            JenisPermohonan::where('isDeleted', false)->get()
+        );
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'jenisPermohonan' => 'required|string|max:255',
-        'keterangan' => 'nullable|string',
-    ]);
+    {
+        // Log request untuk debugging
+        \Log::debug($request->all());
 
-    $validated['parentId'] = null;
-    $validated['createAt'] = now();
-    $validated['updateAt'] = now();
-    $validated['isDeleted'] = 0;
+        $validated = $request->validate([
+            'nama_jenis_permohonan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
+        ]);
 
-    return response()->json(JenisPermohonan::create($validated), 201);
-}
+        $validated['parentId'] = null;
+        $validated['createAt'] = now();
+        $validated['updateAt'] = now();
+        $validated['isDeleted'] = false;
 
+        $data = JenisPermohonan::create($validated);
 
+        return response()->json($data, 201);
+    }
 
     public function show($id)
     {
-        return response()->json(JenisPermohonan::findOrFail($id));
+        $item = JenisPermohonan::findOrFail($id);
+        return response()->json($item);
     }
 
     public function update(Request $request, $id)
     {
         $item = JenisPermohonan::findOrFail($id);
-        $item->update($request->all());
+
+        $validated = $request->validate([
+            'nama_jenis_permohonan' => 'sometimes|required|string|max:255',
+            'keterangan' => 'nullable|string',
+            'parentId' => 'nullable|integer|exists:jenis_permohonan,idJenisPermohonan',
+        ]);
+
+        $validated['updateAt'] = now();
+
+        $item->update($validated);
+
         return response()->json($item);
     }
 
     public function destroy($id)
     {
         $item = JenisPermohonan::findOrFail($id);
-        $item->delete();
+
+        // Soft delete manual: set isDeleted = true
+        $item->isDeleted = true;
+        $item->updateAt = now();
+        $item->save();
+
         return response()->json(null, 204);
     }
 }

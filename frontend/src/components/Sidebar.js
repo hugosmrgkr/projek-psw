@@ -22,6 +22,12 @@ function Sidebar() {
             <span className="menu-title">Jangka Waktu Sewa</span>
           </Link>
         </li>
+        <li className="nav-item">
+          <Link to="/jenis-jangka-waktu" className="nav-link">
+            <i className="mdi mdi-timetable"></i>
+            <span className="menu-title">Jenis Jangka Waktu</span>
+          </Link>
+        </li>
       </ul>
     </nav>
   );

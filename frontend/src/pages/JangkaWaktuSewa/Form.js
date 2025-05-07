@@ -1,41 +1,50 @@
 import React from 'react';
 
 const Form = ({ formData, setFormData, handleSubmit }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Jenis Jangka Waktu:</label>
+        <label>ID Jenis Jangka Waktu</label>
         <input
-          type="number"
+          type="text"
+          name="idJenisJangkaWaktu"
           value={formData.idJenisJangkaWaktu}
-          onChange={e => setFormData({ ...formData, idJenisJangkaWaktu: e.target.value })}
+          onChange={handleChange}
         />
       </div>
       <div>
-        <label>Jangka Waktu:</label>
+        <label>Jangka Waktu</label>
         <input
           type="text"
+          name="jangkaWaktu"
           value={formData.jangkaWaktu}
-          onChange={e => setFormData({ ...formData, jangkaWaktu: e.target.value })}
+          onChange={handleChange}
         />
       </div>
       <div>
-        <label>Keterangan:</label>
-        <input
-          type="text"
+        <label>Keterangan</label>
+        <textarea
+          name="keterangan"
           value={formData.keterangan}
-          onChange={e => setFormData({ ...formData, keterangan: e.target.value })}
+          onChange={handleChange}
         />
       </div>
       <div>
-        <label>Default:</label>
-        <select
-          value={formData.isDefault}
-          onChange={e => setFormData({ ...formData, isDefault: e.target.value })}
-        >
-          <option value="1">Ya</option>
-          <option value="0">Tidak</option>
-        </select>
+        <label>Is Default</label>
+        <input
+          type="checkbox"
+          name="isDefault"
+          checked={formData.isDefault === '1'}
+          onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked ? '1' : '0' })}
+        />
       </div>
       <button type="submit">Simpan</button>
     </form>

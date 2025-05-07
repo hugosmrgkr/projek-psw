@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\JenisPermohonanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\JangkaWaktuSewaController;
+use App\Http\Controllers\Api\JenisJangkaWaktuController;
 
 
 Route::post('login', [AuthController::class, 'login']);
 
 Route::apiResource('jenis-permohonan', JenisPermohonanController::class);
 Route::apiResource('jangka-waktu-sewa', JangkaWaktuSewaController::class);
+Route::apiResource('jenis-jangka-waktu', JenisJangkaWaktuController::class);
 
 // Jika ada resource lain, tambahkan di sini
 // Contoh:

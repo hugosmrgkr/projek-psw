@@ -6,13 +6,20 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 
+//Jenis Permohonan
 import ListJenisPermohonan from './pages/JenisPermohonan/List';
 import CreateJenisPermohonan from './pages/JenisPermohonan/Create';
 import EditJenisPermohonan from './pages/JenisPermohonan/Edit';
 
+//Jangka Waktu Sewa
 import JangkaWaktuSewaList from './pages/JangkaWaktuSewa/List';
 import JangkaWaktuSewaCreate from './pages/JangkaWaktuSewa/Create';
 import JangkaWaktuSewaEdit from './pages/JangkaWaktuSewa/Edit';
+
+//Jenis Jangka Waktu
+import ListJenisJangkaWaktu from './pages/JenisJangkaWaktu/List';
+import CreateJenisJangkaWaktu from './pages/JenisJangkaWaktu/Create';
+import EditJenisJangkaWaktu from './pages/JenisJangkaWaktu/Edit';
 
 function App() {
   return (
@@ -41,6 +48,10 @@ function App() {
           <Route path="jangka-waktu-sewa" element={<JangkaWaktuSewaList />} />
           <Route path="jangka-waktu-sewa/create" element={<JangkaWaktuSewaCreate />} />
           <Route path="jangka-waktu-sewa/edit/:id" element={<JangkaWaktuSewaEdit />} />
+
+          <Route path="jenis-jangka-waktu" element={<ListJenisJangkaWaktu />} />
+          <Route path="jenis-jangka-waktu/create" element={<CreateJenisJangkaWaktu />} />
+          <Route path="jenis-jangka-waktu/edit/:id" element={<EditJenisJangkaWaktu />} />
         </Route>
 
         {/* 404 Not Found */}

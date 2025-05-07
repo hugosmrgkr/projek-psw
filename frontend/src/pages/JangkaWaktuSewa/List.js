@@ -11,14 +11,18 @@ const List = () => {
   }, []);
 
   const fetchData = async () => {
-    const res = await getAll();
-    setData(res.data);
+    try {
+      const result = await getAll();
+      setData(result);  // Assuming result.data holds the array
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Yakin hapus data ini?")) {
       await remove(id);
-      fetchData();
+      fetchData();  // Re-fetch data after deletion
     }
   };
 
@@ -27,7 +31,7 @@ const List = () => {
       <h2>Daftar Jangka Waktu Sewa</h2>
       <button onClick={() => navigate('/jangka-waktu-sewa/create')} className="btn btn-primary mb-3">+ Tambah Baru</button>
       <div className="list-group">
-        {data.map((d) => (
+        {data?.map((d) => (
           <div key={d.idJangkaWaktuSewa} className="list-group-item">
             <div className="d-flex w-100 justify-content-between">
               <h5 className="mb-1">{d.jangkaWaktu}</h5>
