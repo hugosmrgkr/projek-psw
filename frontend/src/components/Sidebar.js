@@ -28,6 +28,18 @@ function Sidebar() {
             <span className="menu-title">Jenis Jangka Waktu</span>
           </Link>
         </li>
+        <li className="nav-item">
+          <Link to="/jenis-objek-retribusi" className="nav-link">
+            <i className="mdi mdi-map-marker-radius"></i>
+            <span className="menu-title">Jenis Objek Retribusi</span>
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/jenis-status" className="nav-link">
+            <i className="mdi mdi-format-list-bulleted"></i>
+            <span className="menu-title">Jenis Status</span>
+          </Link>
+        </li>
       </ul>
     </nav>
   );

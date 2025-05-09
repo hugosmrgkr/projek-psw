@@ -11,6 +11,13 @@ class JenisStatus extends Model
     protected $primaryKey = 'idJenisStatus';
     public $timestamps = false;
     protected $fillable = [
-        'jenisStatus', 'keterangan', 'createAt', 'updateAt', 'isDeleted'
+        'jenisStatus',
+        'keterangan',
+        'createAt',
+        'updateAt',
+        'isDeleted'
     ];
+
+    const CREATED_AT = 'createAt';
+    const UPDATED_AT = 'updateAt';
 }
