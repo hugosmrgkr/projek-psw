@@ -31,6 +31,17 @@ import JenisStatusList from './pages/JenisStatus/List';
 import JenisStatusCreate from './pages/JenisStatus/Create';
 import JenisStatusEdit from './pages/JenisStatus/Edit';
 
+//Lokasi objek retribusi
+import ListLokasi from './pages/LokasiObjekRetribusi/List';
+import CreateLokasi from './pages/LokasiObjekRetribusi/Create';
+import EditLokasi from './pages/LokasiObjekRetribusi/Edit';
+
+// Objek Retribusi
+import ListObjekRetribusi from './pages/ObjekRetribusi/List';
+import CreateObjekRetribusi from './pages/ObjekRetribusi/Create';
+import EditObjekRetribusi from './pages/ObjekRetribusi/Edit';
+
+
 
 function App() {
   return (
@@ -74,6 +85,16 @@ function App() {
           <Route path="jenis-status" element={<JenisStatusList />} />
           <Route path="jenis-status/create" element={<JenisStatusCreate />} />
           <Route path="jenis-status/edit/:id" element={<JenisStatusEdit />} />
+          
+          {/* Lokasi Objek Retribusi */}
+          <Route path="/lokasi-objek-retribusi" element={<ListLokasi />} />
+          <Route path="/lokasi-objek-retribusi/create" element={<CreateLokasi />} />
+          <Route path="/lokasi-objek-retribusi/edit/:id" element={<EditLokasi />} />
+
+          {/* Objek Retribusi */}
+          <Route path="objek-retribusi" element={<ListObjekRetribusi />} />
+          <Route path="objek-retribusi/create" element={<CreateObjekRetribusi />} />
+          <Route path="objek-retribusi/edit/:id" element={<EditObjekRetribusi />} />
         </Route>
 
         {/* 404 Not Found */}

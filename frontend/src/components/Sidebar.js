@@ -40,6 +40,19 @@ function Sidebar() {
             <span className="menu-title">Jenis Status</span>
           </Link>
         </li>
+        <li className="nav-item">
+          <Link to="/lokasi-objek-retribusi" className="nav-link">
+            <i className="mdi mdi-map-marker"></i>
+            <span className="menu-title">Lokasi Objek Retribusi</span>
+          </Link>
+        </li>
+        <li className="nav-item">
+        <Link to="/objek-retribusi" className="nav-link">
+          <i className="mdi mdi-domain"></i>
+          <span className="menu-title">Objek Retribusi</span>
+        </Link>
+      </li>
+
       </ul>
     </nav>
   );
