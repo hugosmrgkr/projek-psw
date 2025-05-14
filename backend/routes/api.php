@@ -20,4 +20,3 @@ Route::apiResource('jenis-objek-retribusi', JenisObjekRetribusiController::class
 Route::apiResource('jenis-status', JenisStatusController::class);
 Route::apiResource('lokasi-objek-retribusi', LokasiObjekRetribusiController::class);
 Route::apiResource('objek-retribusi', ObjekRetribusiController::class);
-Route::apiResource('objek-retribusi', ObjekRetribusiController::class);

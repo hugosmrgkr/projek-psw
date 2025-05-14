@@ -37,8 +37,14 @@ const Edit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach(key => {
+      formDataToSend.append(key, formData[key]);
+    });
+
     try {
-      await updateObjekRetribusi(id, formData);
+      await updateObjekRetribusi(id, formDataToSend); // Kirim FormData ke API
       navigate('/objek-retribusi');
     } catch (error) {
       alert("Gagal memperbarui objek retribusi");

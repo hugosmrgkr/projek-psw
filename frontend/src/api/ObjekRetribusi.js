@@ -5,84 +5,77 @@ const API_URL = 'http://localhost:8000/api/objek-retribusi';
 // Menangani error dari Axios dan menampilkan informasi yang lebih jelas
 const handleAxiosError = (error) => {
     if (error.response) {
-        // Error respons dari server (misalnya status 422)
         console.error("Response Error:", JSON.stringify(error.response.data, null, 2));
-        alert(`Error: ${JSON.stringify(error.response.data, null, 2)}`);  // Menampilkan alert dengan detail error
-        throw error.response.data;  // Mengembalikan pesan error dari server
+        alert(`Error: ${JSON.stringify(error.response.data, null, 2)}`);
+        throw error.response.data;
     } else if (error.request) {
-        // Tidak ada respons dari server
         console.error("No Response:", error.request);
         alert("Tidak ada respons dari server.");
         throw new Error("Tidak ada respons dari server.");
     } else {
-        // Kesalahan saat mengatur permintaan
         console.error("Error in Setup:", error.message);
         alert(`Error: ${error.message}`);
         throw new Error(`Error: ${error.message}`);
     }
 };
 
-const headers = {
-    'Content-Type': 'application/json',  // Pastikan pengiriman data dalam format JSON
-};
-
 // Mengambil semua objek retribusi
 export const getAllObjekRetribusi = async () => {
-    console.log("Mengambil semua objek retribusi...");
     try {
-        const response = await axios.get(API_URL, { headers });
-        console.log("Data Respons:", response.data);  // Menampilkan data respons di konsol
+        const response = await axios.get(API_URL);
         return response.data;
     } catch (error) {
-        handleAxiosError(error);  // Menangani error dengan detail
+        handleAxiosError(error);
     }
 };
 
-// Membuat objek retribusi baru
+// Membuat objek retribusi baru (dengan FormData)
 export const createObjekRetribusi = async (data) => {
-    console.log("Data yang dikirim:", data);  // Melihat data yang dikirim ke server
     try {
-        const response = await axios.post(API_URL, data, { headers });
-        console.log("Respons dari server:", response.data);  // Melihat data respons dari server
+        const response = await axios.post(API_URL, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     } catch (error) {
-        handleAxiosError(error);  // Menangani error
+        handleAxiosError(error);
     }
 };
 
 // Mengambil objek retribusi berdasarkan ID
 export const getObjekRetribusiById = async (id) => {
-    console.log(`Mengambil objek retribusi dengan ID: ${id}`);
     try {
-        const response = await axios.get(`${API_URL}/${id}`, { headers });
-        console.log("Data Respons:", response.data);  // Menampilkan data respons di konsol
+        const response = await axios.get(`${API_URL}/${id}`);
         return response.data;
     } catch (error) {
-        handleAxiosError(error);  // Menangani error dengan detail
+        handleAxiosError(error);
     }
 };
 
-// Memperbarui objek retribusi berdasarkan ID
+// Memperbarui objek retribusi berdasarkan ID (dengan FormData)
 export const updateObjekRetribusi = async (id, data) => {
-    console.log(`Memperbarui objek retribusi dengan ID: ${id}`);
-    console.log("Data yang dikirim:", data);  // Melihat data yang dikirim ke server
     try {
-        const response = await axios.put(`${API_URL}/${id}`, data, { headers });
-        console.log("Respons dari server:", response.data);  // Melihat data respons dari server
+        const response = await axios.post(`${API_URL}/${id}?_method=PUT`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     } catch (error) {
-        handleAxiosError(error);  // Menangani error dengan detail
+        handleAxiosError(error);
     }
 };
 
 // Menghapus objek retribusi berdasarkan ID
 export const deleteObjekRetribusi = async (id) => {
-    console.log(`Menghapus objek retribusi dengan ID: ${id}`);
     try {
-        const response = await axios.delete(`${API_URL}/${id}`, { headers });
-        console.log("Respons dari server:", response.data);  // Menampilkan respons dari server
+        const response = await axios.delete(`${API_URL}/${id}`);
+        if (response.status === 200) {
+            alert(`Objek retribusi dengan ID ${id} berhasil dihapus.`);
+        }
         return response.data;
     } catch (error) {
-        handleAxiosError(error);  // Menangani error dengan detail
+        handleAxiosError(error);
     }
 };

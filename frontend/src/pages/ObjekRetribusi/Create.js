@@ -29,8 +29,15 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Membuat FormData untuk mengirimkan file bersama data
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach(key => {
+      formDataToSend.append(key, formData[key]);
+    });
+
     try {
-      await createObjekRetribusi(formData);
+      await createObjekRetribusi(formDataToSend); // Kirim FormData ke API
       navigate('/objek-retribusi');
     } catch (error) {
       alert("Gagal membuat objek retribusi");
