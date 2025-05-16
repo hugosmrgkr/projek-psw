@@ -1,138 +1,85 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ObjekRetribusi;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
+use App\Http\Resources\ObjekRetribusiResource;
 
 class ObjekRetribusiController extends Controller
 {
     public function index()
     {
-        // Mengambil semua objek retribusi yang belum dihapus (isDeleted = 0)
-        return ObjekRetribusi::where('is_deleted', 0)->get();
+        $data = ObjekRetribusi::where('isDeleted', false)->with(['lokasi', 'jenis'])->get();
+        return ObjekRetribusiResource::collection($data);
     }
 
     public function store(Request $request)
     {
-        // Validasi data yang diterima dari frontend
-        $data = $request->validate([
-            'no_bangunan' => 'nullable|string',
-            'jumlah_lantai' => 'nullable|integer',
-            'panjang_tanah' => 'nullable|numeric',
-            'lebar_tanah' => 'nullable|numeric',
-            'luas_tanah' => 'nullable|numeric',
-            'panjang_bangunan' => 'nullable|numeric',
-            'lebar_bangunan' => 'nullable|numeric',
-            'luas_bangunan' => 'nullable|numeric',
-            'alamat' => 'required|string', // Alamat wajib diisi
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
+        $validated = $request->validate([
+            'idLokasiObjekRetribusi' => 'required|exists:lokasiObjekRetribusi,idLokasiObjekRetribusi',
+            'idJenisObjekRetribusi' => 'required|exists:jenisObjekRetribusi,idJenisObjekRetribusi',
+            'kodeObjekRetribusi' => 'required|string|max:100',
+            'noBangunan' => 'required|string|max:100',
+            'jumlahLantai' => 'required|integer|min:1',
+            'objekRetribusi' => 'required|string|max:255',
+            'panjangTanah' => 'required|numeric',
+            'lebarTanah' => 'required|numeric',
+            'luasTanah' => 'required|numeric',
+            'panjangBangunan' => 'required|numeric',
+            'lebarBangunan' => 'required|numeric',
+            'luasBangunan' => 'required|numeric',
+            'alamat' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'keterangan' => 'nullable|string',
-            'gambar_denah_tanah' => 'nullable|string',
+            'gambarDenahTanah' => 'nullable|string',
         ]);
 
-        // Menambahkan kolom yang tidak ada di input form
-        // $data['created_at'] = now();
-        // $data['updated_at'] = now();
-        $data['is_deleted'] = 0;
-
-        try {
-            // Membuat data baru di tabel ObjekRetribusi
-            $objek = ObjekRetribusi::create($data);
-
-            // Mengembalikan response sukses dengan data yang baru saja dibuat
-            return response()->json([
-                'message' => 'Objek Retribusi berhasil dibuat.',
-                'data' => $objek
-            ], 201); // Status code 201 Created
-        } catch (\Exception $e) {
-            // Menangani error jika terjadi kesalahan saat proses penyimpanan
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-                'error' => $e->getMessage()
-            ], 500); // Status code 500 Internal Server Error
-        }
+        $objek = ObjekRetribusi::create($validated);
+        return new ObjekRetribusiResource($objek->load(['lokasi', 'jenis']));
     }
-
 
     public function show($id)
     {
-        try {
-            $objek = ObjekRetribusi::where('id_objek_retribusi', $id)
-                ->where('is_deleted', 0)
-                ->firstOrFail();
-
-            return response()->json($objek);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Objek Retribusi tidak ditemukan.',
-                'error' => 'Data dengan ID ' . $id . ' tidak ditemukan.'
-            ], 404);
-        }
+        $objek = ObjekRetribusi::with(['lokasi', 'jenis'])->where('isDeleted', false)->findOrFail($id);
+        return new ObjekRetribusiResource($objek);
     }
-
 
     public function update(Request $request, $id)
     {
-        // Validasi data yang diterima dari frontend
-        try {
-            $data = $request->validate([
-                // Menghapus validasi untuk id_lokasi_objek_retribusi, id_jenis_objek_retribusi, kode_objek_retribusi, dan objek_retribusi
-                'no_bangunan' => 'nullable|string',
-                'jumlah_lantai' => 'nullable|integer',
-                'panjang_tanah' => 'nullable|numeric',
-                'lebar_tanah' => 'nullable|numeric',
-                'luas_tanah' => 'nullable|numeric',
-                'panjang_bangunan' => 'nullable|numeric',
-                'lebar_bangunan' => 'nullable|numeric',
-                'luas_bangunan' => 'nullable|numeric',
-                'alamat' => 'required|string',
-                'latitude' => 'nullable|string',
-                'longitude' => 'nullable|string',
-                'keterangan' => 'nullable|string',
-                'gambar_denah_tanah' => 'nullable|string',
-            ]);
+        $objek = ObjekRetribusi::findOrFail($id);
 
-            // Update timestamp
-            $data['updated_at'] = now();
+        $validated = $request->validate([
+            'idLokasiObjekRetribusi' => 'sometimes|exists:lokasiObjekRetribusi,idLokasiObjekRetribusi',
+            'idJenisObjekRetribusi' => 'sometimes|exists:jenisObjekRetribusi,idJenisObjekRetribusi',
+            'kodeObjekRetribusi' => 'sometimes|string|max:100',
+            'noBangunan' => 'sometimes|string|max:100',
+            'jumlahLantai' => 'sometimes|integer|min:1',
+            'objekRetribusi' => 'sometimes|string|max:255',
+            'panjangTanah' => 'sometimes|numeric',
+            'lebarTanah' => 'sometimes|numeric',
+            'luasTanah' => 'sometimes|numeric',
+            'panjangBangunan' => 'sometimes|numeric',
+            'lebarBangunan' => 'sometimes|numeric',
+            'luasBangunan' => 'sometimes|numeric',
+            'alamat' => 'sometimes|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'keterangan' => 'nullable|string',
+            'gambarDenahTanah' => 'nullable|string',
+        ]);
 
-            // Mencari objek retribusi berdasarkan ID dan memperbarui datanya
-            $objek = ObjekRetribusi::where('id_objek_retribusi', $id)
-                ->where('is_deleted', 0)
-                ->firstOrFail();
-            $objek->update($data);
-
-            return response()->json($objek);
-        } catch (ValidationException $e) {
-            // Menangani error validasi jika ada field yang tidak valid
-            return response()->json([
-                'message' => 'Data yang dikirim tidak valid.',
-                'errors' => $e->errors()
-            ], 422);
-        }
+        $objek->update($validated);
+        return new ObjekRetribusiResource($objek->load(['lokasi', 'jenis']));
     }
 
     public function destroy($id)
     {
-        try {
-            $objek = ObjekRetribusi::where('id_objek_retribusi', $id)
-                ->where('is_deleted', 0)
-                ->firstOrFail();
+        $objek = ObjekRetribusi::findOrFail($id);
+        $objek->delete(); // Soft delete, bukan hapus permanen
 
-            $objek->is_deleted = 1;
-            $objek->save();
-
-            return response()->json(['message' => 'Objek retribusi berhasil dihapus (soft delete)']);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => 'Objek Retribusi tidak ditemukan.',
-                'error' => 'Data dengan ID ' . $id . ' tidak ditemukan.'
-            ], 404);
-        }
+        return response()->json(['message' => 'Objek retribusi berhasil dihapus (soft delete).']);
     }
-
-
-
 }

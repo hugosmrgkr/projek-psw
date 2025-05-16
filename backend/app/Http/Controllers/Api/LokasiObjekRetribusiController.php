@@ -3,58 +3,61 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\LokasiObjekRetribusi;
+use App\Http\Resources\LokasiObjekRetribusiResource;
+use Illuminate\Http\Request;
 
 class LokasiObjekRetribusiController extends Controller
 {
     public function index()
     {
-        return LokasiObjekRetribusi::where('isDeleted', 0)->get();
+        return LokasiObjekRetribusiResource::collection(
+            LokasiObjekRetribusi::where('isDeleted', false)->get()
+        );
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'lokasiObjekRetribusi' => 'required|string|max:255',
+            'lokasiObjekRetribusi' => 'required|string',
             'keterangan' => 'nullable|string',
         ]);
 
-        $data = $request->all();
-        $data['createAt'] = now();
-        $data['updateAt'] = now();
+        $data = LokasiObjekRetribusi::create($request->all());
 
-        return LokasiObjekRetribusi::create($data);
+        return new LokasiObjekRetribusiResource($data);
     }
 
     public function show($id)
     {
-        return LokasiObjekRetribusi::findOrFail($id);
+        $data = LokasiObjekRetribusi::findOrFail($id);
+        return new LokasiObjekRetribusiResource($data);
     }
 
     public function update(Request $request, $id)
     {
-        $lokasi = LokasiObjekRetribusi::findOrFail($id);
+        $data = LokasiObjekRetribusi::findOrFail($id);
+        $data->update($request->all());
 
-        $request->validate([
-            'lokasiObjekRetribusi' => 'required|string|max:255',
-            'keterangan' => 'nullable|string',
-        ]);
-
-        $lokasi->update([
-            'lokasiObjekRetribusi' => $request->lokasiObjekRetribusi,
-            'keterangan' => $request->keterangan,
-            'updateAt' => now(),
-        ]);
-
-        return $lokasi;
+        return new LokasiObjekRetribusiResource($data);
     }
 
     public function destroy($id)
     {
-        $lokasi = LokasiObjekRetribusi::findOrFail($id);
-        $lokasi->update(['isDeleted' => 1]);
+        $data = LokasiObjekRetribusi::findOrFail($id);
+        $data->isDeleted = true;
+        $data->save();
+        $data->delete(); // soft delete
 
-        return response()->json(['message' => 'Berhasil dihapus']);
+        return response()->json(['message' => 'Data berhasil dihapus.']);
+    }
+
+    public function restore($id)
+    {
+        $data = LokasiObjekRetribusi::withTrashed()->findOrFail($id);
+        $data->isDeleted = false;
+        $data->restore();
+
+        return new LokasiObjekRetribusiResource($data);
     }
 }

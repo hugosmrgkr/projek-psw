@@ -7,11 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class TarifObjekRetribusi extends Model
 {
+    use HasFactory;
+
     protected $table = 'tarifObjekRetribusi';
     protected $primaryKey = 'idTarifObjekRetribusi';
-    public $timestamps = false;
+
     protected $fillable = [
-        'idObjekRetribusi', 'idJenisJangkaWaktu', 'tanggalDinilai', 'namaPenilai', 'nominalTarif',
-        'floorHasilPenilaian', 'keterangan', 'isDefault', 'createAt', 'updateAt', 'isDeleted'
+        'idObjekRetribusi',
+        'idJenisJangkaWaktu',
+        'tanggalDinilai',
+        'namaPenilai',
+        'nominalTarif',
+        'fileTarif',
+        'keterangan',
+        'fileHasilPenilaian',
+        'isDefault',
+        'isDeleted'
     ];
+
+    public function objekRetribusi()
+    {
+        return $this->belongsTo(ObjekRetribusi::class, 'idObjekRetribusi');
+    }
+
+    public function jenisJangkaWaktu()
+    {
+        return $this->belongsTo(JenisJangkaWaktu::class, 'idJenisJangkaWaktu');
+    }
 }

@@ -7,11 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class PermohonanSewa extends Model
 {
+    use HasFactory;
+
     protected $table = 'permohonanSewa';
     protected $primaryKey = 'idPermohonanSewa';
-    public $timestamps = false;
+
     protected $fillable = [
-        'idJenisPermohonan', 'nomorSuratPermohonan', 'tanggalPengajuan', 'idWajibRetribusi', 'idObjekRetribusi',
-        'idJenisJangkaWaktu', 'lamaSewa', 'idPeruntukanSewa', 'idStatus', 'createBy', 'createAt', 'updateAt', 'isDeleted'
+        'idJenisPermohonan',
+        'nomorSuratPermohonan',
+        'tanggalPengajuan',
+        'namaPemohon',
+        'alamatPemohon',
+        'idTarifObjekRetribusi',
+        'isDeleted',
     ];
+
+    public function jenisPermohonan()
+    {
+        return $this->belongsTo(JenisPermohonan::class, 'idJenisPermohonan');
+    }
+
+    public function tarifObjekRetribusi()
+    {
+        return $this->belongsTo(TarifObjekRetribusi::class, 'idTarifObjekRetribusi');
+    }
 }

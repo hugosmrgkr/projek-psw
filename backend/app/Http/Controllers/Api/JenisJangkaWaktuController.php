@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\JenisJangkaWaktuResource;
 use App\Models\JenisJangkaWaktu;
 use Illuminate\Http\Request;
 
@@ -10,58 +11,53 @@ class JenisJangkaWaktuController extends Controller
 {
     public function index()
     {
-        return JenisJangkaWaktu::where('isDeleted', 0)->get();
+        $data = JenisJangkaWaktu::where('isDeleted', false)->get();
+        return JenisJangkaWaktuResource::collection($data);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'jenisJangkaWaktu' => 'required|string|max:255',
+        $request->validate([
+            'jenisJangkaWaktu' => 'required|string|max:100',
             'keterangan' => 'nullable|string',
         ]);
 
-        $data['createAt'] = now();
-        $data['updateAt'] = now();
-        $data['isDeleted'] = 0;
+        $data = JenisJangkaWaktu::create([
+            'jenisJangkaWaktu' => $request->jenisJangkaWaktu,
+            'keterangan' => $request->keterangan,
+        ]);
 
-        $created = JenisJangkaWaktu::create($data);
-
-        return response()->json($created, 201);
+        return new JenisJangkaWaktuResource($data);
     }
 
     public function show($id)
     {
-        $item = JenisJangkaWaktu::where('idJenisJangkaWaktu', $id)
-            ->where('isDeleted', 0)
-            ->firstOrFail();
-
-        return response()->json($item);
+        $data = JenisJangkaWaktu::findOrFail($id);
+        return new JenisJangkaWaktuResource($data);
     }
 
     public function update(Request $request, $id)
     {
-        $item = JenisJangkaWaktu::where('idJenisJangkaWaktu', $id)->firstOrFail();
-
-        $data = $request->validate([
-            'jenisJangkaWaktu' => 'required|string|max:255',
+        $request->validate([
+            'jenisJangkaWaktu' => 'required|string|max:100',
             'keterangan' => 'nullable|string',
         ]);
 
-        $data['updateAt'] = now();
+        $data = JenisJangkaWaktu::findOrFail($id);
+        $data->update([
+            'jenisJangkaWaktu' => $request->jenisJangkaWaktu,
+            'keterangan' => $request->keterangan,
+        ]);
 
-        $item->update($data);
-
-        return response()->json($item);
+        return new JenisJangkaWaktuResource($data);
     }
 
     public function destroy($id)
     {
-        $item = JenisJangkaWaktu::where('idJenisJangkaWaktu', $id)->firstOrFail();
-    
-        // Menghapus data secara permanen
-        $item->delete();
-    
-        return response()->json(['message' => 'Data berhasil dihapus'], 204);
+        $data = JenisJangkaWaktu::findOrFail($id);
+        $data->update(['isDeleted' => true]);
+        $data->delete(); // soft delete
+
+        return response()->json(['message' => 'Data berhasil dihapus.']);
     }
-    
 }

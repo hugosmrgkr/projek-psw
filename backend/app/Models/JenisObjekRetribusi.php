@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisObjekRetribusi extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'jenisObjekRetribusi';
+
     protected $primaryKey = 'idJenisObjekRetribusi';
-    public $timestamps = false;
+
     protected $fillable = [
-        'jenisObjekRetribusi', 'keterangan', 'createAt', 'updateAt', 'isDeleted'
+        'jenisObjekRetribusi',
+        'keterangan',
     ];
+
+    protected $dates = ['deleted_at'];
 }

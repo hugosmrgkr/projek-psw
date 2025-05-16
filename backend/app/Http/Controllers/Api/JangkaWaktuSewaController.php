@@ -5,85 +5,73 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\JangkaWaktuSewa;
 use Illuminate\Http\Request;
+use App\Http\Resources\JangkaWaktuSewaResource;
 
 class JangkaWaktuSewaController extends Controller
 {
     public function index()
     {
-        // Mengambil data yang belum dihapus (isDeleted = 0)
-        return JangkaWaktuSewa::where('isDeleted', 0)->get();
+        // Mengambil data Jangka Waktu Sewa yang tidak dihapus
+        return JangkaWaktuSewaResource::collection(
+            JangkaWaktuSewa::where('isDeleted', false)->get()
+        );
     }
 
     public function store(Request $request)
     {
-        try {
-            $data = $request->validate([
-                'idJenisJangkaWaktu' => 'required|integer',
-                'jangkaWaktu' => 'required|string',
-                'keterangan' => 'nullable|string',
-                'isDefault' => 'nullable|boolean',
-            ]);
-    
-            $data['createAt'] = now();
-            $data['updateAt'] = now();
-            $data['isDeleted'] = 0;
-    
-            $jangka = JangkaWaktuSewa::create($data);
-            return response()->json($jangka, 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal menyimpan data.', 'detail' => $e->getMessage()], 500);
-        }
+        // Validasi input
+        $data = $request->validate([
+            'idJenisJangkaWaktu' => 'required|exists:jenisJangkaWaktu,idJenisJangkaWaktu',  // Pastikan nama tabel sudah sesuai
+            'jangkaWaktuSewa' => 'required|string|max:100',
+            'keterangan' => 'nullable|string',
+            'isDefault' => 'nullable|boolean',  // Pastikan ini diterima sebagai boolean
+        ]);
+
+        // Menyimpan data ke dalam database
+        $sewa = JangkaWaktuSewa::create($data);
+
+        // Mengembalikan resource
+        return new JangkaWaktuSewaResource($sewa);
     }
-    
 
     public function show($id)
     {
-        // Menampilkan data berdasarkan ID dan memeriksa isDeleted
-        return JangkaWaktuSewa::where('idJangkaWaktuSewa', $id)
-            ->where('isDeleted', 0) // Menyaring data yang tidak dihapus
-            ->firstOrFail(); // Jika tidak ditemukan, akan mengembalikan 404
+        // Menampilkan data berdasarkan ID
+        $sewa = JangkaWaktuSewa::findOrFail($id);
+        return new JangkaWaktuSewaResource($sewa);
     }
 
     public function update(Request $request, $id)
     {
-        // Menemukan data berdasarkan ID
-        $jangka = JangkaWaktuSewa::where('idJangkaWaktuSewa', $id)->firstOrFail();
+        // Mengambil data berdasarkan ID
+        $sewa = JangkaWaktuSewa::findOrFail($id);
 
-        // Validasi data yang diterima
+        // Validasi input update
         $data = $request->validate([
-            'idJenisJangkaWaktu' => 'sometimes|required|integer',
-            'jangkaWaktu' => 'sometimes|required|string',
+            'idJenisJangkaWaktu' => 'required|exists:jenisJangkaWaktu,idJenisJangkaWaktu',  // Pastikan nama tabel sudah sesuai
+            'jangkaWaktuSewa' => 'required|string|max:100',
             'keterangan' => 'nullable|string',
-            'isDefault' => 'nullable|boolean', // validasi nullable untuk isDefault
+            'isDefault' => 'nullable|boolean',  // Pastikan ini diterima sebagai boolean
         ]);
 
-        // Pastikan kita tidak mengubah 'isDeleted'
-        if (isset($data['isDeleted'])) {
-            unset($data['isDeleted']); // Jangan biarkan isDeleted berubah
-        }
+        // Melakukan update data
+        $sewa->update($data);
 
-        // Menambahkan waktu update
-        $data['updateAt'] = now();
-
-        // Update data
-        $jangka->update($data);
-
-        // Mengembalikan data yang telah diperbarui
-        return response()->json($jangka, 200); // Response OK
+        // Mengembalikan resource
+        return new JangkaWaktuSewaResource($sewa);
     }
 
     public function destroy($id)
     {
-        // Menemukan data berdasarkan ID
-        $jangka = JangkaWaktuSewa::where('idJangkaWaktuSewa', $id)->firstOrFail();
+        // Menentukan data yang ingin dihapus
+        $sewa = JangkaWaktuSewa::findOrFail($id);
 
-        // Soft delete: set isDeleted = 1 dan update waktu
-        $jangka->update([
-            'isDeleted' => 1,
-            'updateAt' => now(),
-        ]);
+        // Melakukan soft delete dengan mengubah status 'isDeleted' menjadi true
+        $sewa->isDeleted = true;
+        $sewa->save();
+        $sewa->delete(); // Soft delete
 
-        // Mengembalikan response dengan status 204 (No Content) setelah berhasil dihapus
-        return response()->noContent(); 
+        // Mengembalikan response JSON
+        return response()->json(['message' => 'Berhasil dihapus (soft delete).']);
     }
 }

@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JenisJangkaWaktu extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'jenisJangkaWaktu';
+
     protected $primaryKey = 'idJenisJangkaWaktu';
-    public $timestamps = false;
+
     protected $fillable = [
-        'jenisJangkaWaktu', 'keterangan', 'createAt', 'updateAt', 'isDeleted'
+        'jenisJangkaWaktu',
+        'keterangan',
+        'isDeleted',
     ];
 }

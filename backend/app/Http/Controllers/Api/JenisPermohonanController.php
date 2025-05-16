@@ -2,72 +2,54 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\JenisPermohonan;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\JenisPermohonan;
+use App\Http\Resources\JenisPermohonanResource;
 
 class JenisPermohonanController extends Controller
 {
+    // Ambil semua jenis permohonan yang tidak dihapus
     public function index()
     {
-        // Ambil semua data yang belum dihapus (isDeleted = false)
-        return response()->json(
-            JenisPermohonan::where('isDeleted', false)->get()
-        );
+        $jenisPermohonan = JenisPermohonan::where('isDeleted', false)->get();
+        return JenisPermohonanResource::collection($jenisPermohonan);
     }
 
+  
     public function store(Request $request)
     {
-        // Log request untuk debugging
-        \Log::debug($request->all());
-
-        $validated = $request->validate([
-            'nama_jenis_permohonan' => 'required|string|max:255',
-            'keterangan' => 'nullable|string',
+        $request->validate([
+            'jenisPermohonan' => 'required|in:Permohonan Baru,Perpanjangan,Pembaharuan',
+            'parentId' => 'nullable|integer',
+            'keterangan' => 'nullable|string'
         ]);
 
-        $validated['parentId'] = null;
-        $validated['createAt'] = now();
-        $validated['updateAt'] = now();
-        $validated['isDeleted'] = false;
-
-        $data = JenisPermohonan::create($validated);
-
-        return response()->json($data, 201);
+        $jenisPermohonan = JenisPermohonan::create($request->all());
+        return new JenisPermohonanResource($jenisPermohonan);
     }
 
+    // Menampilkan detail jenis permohonan berdasarkan ID
     public function show($id)
     {
-        $item = JenisPermohonan::findOrFail($id);
-        return response()->json($item);
+        $jenisPermohonan = JenisPermohonan::findOrFail($id);
+        return new JenisPermohonanResource($jenisPermohonan);
     }
 
+    // Mengupdate jenis permohonan
     public function update(Request $request, $id)
     {
-        $item = JenisPermohonan::findOrFail($id);
-
-        $validated = $request->validate([
-            'nama_jenis_permohonan' => 'sometimes|required|string|max:255',
-            'keterangan' => 'nullable|string',
-            'parentId' => 'nullable|integer|exists:jenis_permohonan,idJenisPermohonan',
-        ]);
-
-        $validated['updateAt'] = now();
-
-        $item->update($validated);
-
-        return response()->json($item);
+        $jenisPermohonan = JenisPermohonan::findOrFail($id);
+        $jenisPermohonan->update($request->all());
+        return new JenisPermohonanResource($jenisPermohonan);
     }
 
+    // Menghapus jenis permohonan (soft delete)
     public function destroy($id)
     {
-        $item = JenisPermohonan::findOrFail($id);
-
-        // Soft delete manual: set isDeleted = true
-        $item->isDeleted = true;
-        $item->updateAt = now();
-        $item->save();
-
-        return response()->json(null, 204);
+        $jenisPermohonan = JenisPermohonan::findOrFail($id);
+        $jenisPermohonan->update(['isDeleted' => true]);
+        return response()->json(['message' => 'Data berhasil dihapus.']);
     }
+
 }

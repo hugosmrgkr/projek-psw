@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\JenisStatusResource;
 use App\Models\JenisStatus;
 use Illuminate\Http\Request;
 
@@ -9,54 +11,46 @@ class JenisStatusController extends Controller
 {
     public function index()
     {
-        return JenisStatus::where('isDeleted', 0)->get();
+        $data = JenisStatus::where('isDeleted', false)->get();
+        return JenisStatusResource::collection($data);
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'jenisStatus' => 'required|string|max:255',
+        $validated = $request->validate([
+            'jenisStatus' => 'required|in:Proses,Disetujui,Ditolak,Dibatalkan',
             'keterangan' => 'nullable|string',
         ]);
-    
-        $data['isDeleted'] = 0;
-        $data['createAt'] = now(); // tambah ini!
-        $data['updateAt'] = now(); // tambah ini!
-    
-        return JenisStatus::create($data);
+
+        $data = JenisStatus::create($validated);
+        return new JenisStatusResource($data);
     }
-    
 
     public function show($id)
     {
-        return JenisStatus::where('idJenisStatus', $id)->where('isDeleted', 0)->firstOrFail();
+        $data = JenisStatus::findOrFail($id);
+        return new JenisStatusResource($data);
     }
 
     public function update(Request $request, $id)
     {
-        $item = JenisStatus::where('idJenisStatus', $id)->firstOrFail();
+        $data = JenisStatus::findOrFail($id);
 
-        $data = $request->validate([
-            'jenisStatus' => 'required|string|max:255',
+        $validated = $request->validate([
+            'jenisStatus' => 'sometimes|in:Proses,Disetujui,Ditolak,Dibatalkan',
             'keterangan' => 'nullable|string',
         ]);
 
-        $data['updateAt'] = now();
-
-        $item->update($data);
-
-        return $item;
+        $data->update($validated);
+        return new JenisStatusResource($data);
     }
 
     public function destroy($id)
     {
-        $item = JenisStatus::where('idJenisStatus', $id)->firstOrFail();
+        $data = JenisStatus::findOrFail($id);
+        $data->update(['isDeleted' => true]);
+        $data->delete();
 
-        $item->update([
-            'isDeleted' => 1,
-            'updateAt' => now()
-        ]);
-
-        return response()->noContent();
+        return response()->json(['message' => 'Data berhasil dihapus'], 200);
     }
 }
