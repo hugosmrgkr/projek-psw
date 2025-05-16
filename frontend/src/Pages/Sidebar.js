@@ -54,7 +54,7 @@ function Sidebar({ collapsed, toggleSidebar }) {
       title: 'Objek Retribusi',
       icon: <Building size={18} />,
       submenu: [
-        { title: 'Data Objek Retribusi', path: '/dataobjekretribusi' },
+        { title: 'Data Objek Retribusi', path: '/objekretribusi' },
         { title: 'Jenis Objek Retribusi', path: '/jenisobjekretribusi' },
         { title: 'Lokasi Objek Retribusi', path: '/lokasiobjekretribusi' },
         { title: 'Tarif Objek Retribusi', path: '/tarifobjekretribusi' },
@@ -65,7 +65,7 @@ function Sidebar({ collapsed, toggleSidebar }) {
       title: 'Status',
       icon: <Tag size={18} />,
       submenu: [
-        { title: 'Data Status', path: '/datastatus' },
+        { title: 'Data Status', path: '/status' },
         { title: 'Jenis Status', path: '/jenisstatus' },
       ],
     },
