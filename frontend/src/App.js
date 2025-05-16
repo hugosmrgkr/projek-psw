@@ -197,7 +197,13 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Redirect "/" to "/login" */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Login page */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected routes */}
         <Route
           path="/*"
           element={
@@ -210,5 +216,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;

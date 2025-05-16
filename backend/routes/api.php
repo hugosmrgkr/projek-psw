@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
@@ -17,7 +16,9 @@ use App\Http\Controllers\Api\TarifObjekRetribusiController;
 use App\Http\Controllers\Api\PermohonanSewaController;
 use App\Http\Controllers\AuthController;
 
+// Route login dengan controller yang benar
 Route::post('/login', [AuthController::class, 'login']);
+
 Route::apiResource('permohonan-sewa', PermohonanSewaController::class);
 Route::apiResource('tarif-objek-retribusi', TarifObjekRetribusiController::class);
 Route::apiResource('wajib-retribusi', WajibRetribusiController::class);
@@ -31,4 +32,4 @@ Route::post('lokasi-objek-retribusi/{id}/restore', [LokasiObjekRetribusiControll
 Route::apiResource('jangka-waktu-sewa', JangkaWaktuSewaController::class);
 Route::apiResource('/jenis-jangka-waktu', JenisJangkaWaktuController::class);
 Route::apiResource('jenis-permohonan', JenisPermohonanController::class);
-Route::apiResource('users', UserController::class);
+Route::apiResource('user', UserController::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -14,17 +15,23 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Akun hardcoded
-        $validEmail = 'admintobalink@gmail.com';
-        $hashedPassword = '$2y$10$1/XM8D4dqbRQ1KuoLbZMVOjy6.guiHeITxb1oBdU9nLEgi4t5WUGu'; // Hash untuk 'admin123'
+        // Cari user berdasarkan email
+        $user = User::where('email', $request->email)->first();
 
-        if ($request->email === $validEmail && Hash::check($request->password, $hashedPassword)) {
-            return response()->json([
-                'message' => 'Login berhasil',
-                'token' => bin2hex(random_bytes(32)) // token dummy
-            ]);
+        // Jika user tidak ditemukan atau password tidak cocok
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        return response()->json(['message' => 'Email atau password salah'], 401);
+        // Tambahkan ini jika kamu ingin memastikan akun belum dihapus
+        if ($user->isDeleted) {
+            return response()->json(['message' => 'Akun ini sudah dihapus'], 403);
+        }
+
+        return response()->json([
+            'message' => 'Login berhasil',
+            'user' => $user,
+            'token' => bin2hex(random_bytes(32)) // Token dummy (bisa diganti JWT/Sanctum)
+        ]);
     }
 }
