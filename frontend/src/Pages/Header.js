@@ -1,60 +1,44 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const navigate = useNavigate();
-  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
-  const toggleDropdown = () => setShowDropdown(!showDropdown);
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top px-3" style={{ zIndex: 1050 }}>
-      <div className="container-fluid d-flex justify-content-between align-items-center">
-        {/* Left: Logo dan Teks */}
-        <div className="d-flex align-items-center gap-2">
-          <div className="rounded-circle bg-warning d-flex justify-content-center align-items-center" style={{ width: 40, height: 40 }}>
-            <img
-              src="/background.png"
-              alt="Logo"
-              className="rounded-circle"
-              style={{ width: 34, height: 34, objectFit: 'cover' }}
-            />
-          </div>
-          <span className="fw-bold fs-4 mb-0 user-select-none">TapaTupa</span>
-        </div>
-
-        {/* Right: Dropdown Profile */}
-        <div className="dropdown">
-          <button
-            className="btn btn-light d-flex align-items-center gap-2"
-            onClick={toggleDropdown}
-            aria-expanded={showDropdown}
-            aria-haspopup="true"
-          >
-            <img
-              src="/assets-admin/images/faces/face28.jpg"
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: 40, height: 40, objectFit: 'cover' }}
-            />
-            <i className="bi bi-chevron-down"></i>
-          </button>
-
-          <ul className={`dropdown-menu dropdown-menu-end mt-2${showDropdown ? ' show' : ''}`}>
-            <li>
-              <button className="dropdown-item text-danger d-flex align-items-center" onClick={handleLogout}>
-                <i className="bi bi-box-arrow-right me-2"></i> Logout
-              </button>
-            </li>
-          </ul>
-        </div>
+    <div
+      style={{
+        width: '100%',
+        height: 81,
+        padding: '16px',
+        background: 'white',
+        boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.05)',
+        borderBottom: '1px solid #E5E7EB',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'fixed',
+        top: 0,
+        zIndex: 1050,
+      }}
+    >
+      {/* Kiri: Logo dan Nama */}
+      <div className="d-flex align-items-center ps-3">
+        <img src="/tapatupa-logo.png" alt="Logo" style={{ width: 97, height: 61 }} />
       </div>
-    </nav>
+
+      
+        <button
+          className="btn btn-outline-danger ms-3 d-flex align-items-center gap-2"
+          onClick={handleLogout}
+        >
+          <i className="bi bi-box-arrow-right"></i>
+          Logout
+        </button>
+      </div>
   );
 }
 
