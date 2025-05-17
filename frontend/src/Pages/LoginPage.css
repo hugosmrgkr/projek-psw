@@ -1,0 +1,312 @@
+/* LoginPage.css - Improved and organized version */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* CSS Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Color Variables */
+  --primary-bg: #BFD0E7;
+  --text-dark: #1E1E1E;
+  --text-light: #F5F5F5;
+  --button-color: #2C2C2C;
+  --box-shadow: rgba(0, 0, 0, 0.25);
+  --input-border: #D9D9D9;
+  --success-color: #4CAF50;
+  --error-color: #ff3333;
+  
+  /* Spacing Variables */
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  
+  /* Font Sizes */
+  --font-sm: 14px;
+  --font-base: 16px;
+  --font-lg: 18px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.4;
+}
+
+/* Main container */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background: linear-gradient(135deg, #d4e0f7 0%, #86a8e7 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Background decoration elements */
+.bg-element {
+  position: absolute;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+  backdrop-filter: blur(5px);
+  opacity: 0.85;
+  right: 0; /* Align all elements to the right side */
+  transform-origin: right center;
+}
+
+.bg-element-1 {
+  width: 1000px;
+  height: 1074px;
+  top: 80%;
+  transform: rotate(-20deg);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  z-index: 1;
+  right: -200px;
+}
+
+.bg-element-2 {
+  width: 900px;
+  height: 1110px;
+  top: 35%;
+  transform: rotate(-25deg);
+  background: linear-gradient(135deg, #a8817c 0%, #715757 100%);
+  z-index: 2;
+  right: -180px;
+}
+
+.bg-element-3 {
+  width: 800px;
+  height: 900px;
+  top: -5%;
+  transform: rotate(-30deg);
+  background: linear-gradient(135deg, #434343 0%, #000000 100%);
+  z-index: 3;
+  right: -150px;
+}
+
+/* Main login box */
+.login-box {
+  width: 371px;
+  height: 484px;
+  position: relative;
+  background: rgba(255, 251, 251, 0.9);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+
+.login-box:hover {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+  transform: translateY(-5px);
+}
+
+/* Logo styling */
+.login-logo {
+  width: 154px;
+  height: 97px;
+  position: absolute;
+  left: 50%;
+  top: 50px;
+  transform: translateX(-50%);
+}
+
+.login-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Login form container */
+.login-form-container {
+  width: 320px;
+  position: absolute;
+  left: 50%;
+  top: 180px;
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.login-form {
+  width: 100%;
+}
+
+/* Form elements */
+.form-group {
+  width: 100%;
+  margin-bottom: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-label {
+  color: var(--text-dark);
+  font-size: var(--font-base);
+  font-weight: 400;
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(217, 217, 217, 0.8);
+  font-family: inherit;
+  font-size: var(--font-base);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(134, 168, 231, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Button styling */
+.form-button-container {
+  width: 100%;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.login-button {
+  flex: 1;
+  padding: var(--space-sm);
+  background: linear-gradient(135deg, #434343 0%, #000000 100%);
+  border-radius: 8px;
+  border: none;
+  color: var(--text-light);
+  font-size: var(--font-base);
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #000000 0%, #434343 100%);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.login-button:active {
+  background: linear-gradient(135deg, #000000 0%, #2d2d2d 100%);
+  transform: translateY(1px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  margin-top: var(--space-md);
+  color: var(--error-color);
+  font-size: var(--font-sm);
+  text-align: center;
+  width: 100%;
+}
+
+/* Notification styling */
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+
+.notification-container {
+  background: white;
+  padding: var(--space-lg);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  max-width: 320px;
+  width: 90%;
+}
+
+.notification-content {
+  text-align: center;
+}
+
+.notification-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto var(--space-md);
+  border-radius: 50%;
+  background: rgba(76, 175, 80, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-title {
+  font-size: var(--font-lg);
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.notification-message {
+  color: #666;
+  font-size: var(--font-sm);
+  margin-bottom: var(--space-md);
+}
+
+.loading-bar {
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--success-color);
+  animation: progress 2s linear;
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 480px) {
+  .login-box {
+    width: 90%;
+    max-width: 371px;
+  }
+  
+  .login-form-container {
+    width: 90%;
+    max-width: 320px;
+  }
+}   
