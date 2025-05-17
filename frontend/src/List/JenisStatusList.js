@@ -241,7 +241,7 @@ const ListJenisStatus = () => {
               <div className="blue-line"></div>
               <h2 className="title">Daftar Jenis Status</h2>
             </div>
-            <Link to="/status/tambah" className="add-button">
+            <Link to="/jenisstatus/add" className="add-button">
               <span className="plus-icon">+</span> Tambah Data
             </Link>
           </div>
