@@ -29,26 +29,26 @@ const CreatePostForm = () => {
     setIsSubmitting(true);
     setErrors({});
     setSuccessMessage("");
-    
+
     const newErrors = {};
     if (!form.jenisPermohonan) {
       newErrors.jenisPermohonan = ["Jenis permohonan harus diisi"];
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setIsSubmitting(false);
       return;
     }
-    
+
     try {
       const headers = {
         'Content-Type': 'application/json',
       };
-      
+
       const authToken = getAuthToken();
       if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-      
+
       const csrfToken = getCsrfToken();
       if (csrfToken) headers['X-CSRF-TOKEN'] = csrfToken;
 
@@ -61,7 +61,7 @@ const CreatePostForm = () => {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(formData),
-        credentials: 'include' 
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -91,111 +91,113 @@ const CreatePostForm = () => {
   };
 
   return (
-    <div className="container my-4" style={{ maxWidth: '720px' }}>
-      <div className="card shadow-sm">
-        <div className="card-header bg-primary text-white d-flex align-items-center">
-          <span className="me-2" style={{ fontSize: '1.3rem' }}>📝</span>
-          <h5 className="mb-0">Tambah Jenis Permohonan</h5>
+    <div className="bg-light" style={{ minHeight: '100vh', padding: '40px', background: 'linear-gradient(to right, #f8f9fa, #e9ecef)' }}>
+      <div className="container" style={{ maxWidth: '750px' }}>
+        <div className="card shadow rounded-4 border-0">
+          <div className="card-header bg-gradient bg-primary text-white d-flex align-items-center rounded-top-4">
+            <span className="me-2 fs-4">📝</span>
+            <h5 className="mb-0 fw-semibold">Tambah Jenis Permohonan</h5>
+          </div>
+
+          {successMessage && (
+            <div className="alert alert-success m-3 d-flex align-items-center rounded-3" role="alert">
+              <span className="me-2 fs-5">✅</span>
+              {successMessage}
+            </div>
+          )}
+
+          <form className="card-body p-4" onSubmit={handleSubmit} noValidate>
+            {/* Jenis Permohonan */}
+            <div className="mb-3">
+              <label htmlFor="jenisPermohonan" className="form-label">
+                Jenis Permohonan <span className="text-danger">*</span>
+              </label>
+              <select
+                id="jenisPermohonan"
+                name="jenisPermohonan"
+                className={`form-select ${errors.jenisPermohonan ? 'is-invalid' : ''}`}
+                value={form.jenisPermohonan}
+                onChange={handleChange}
+                disabled={isSubmitting}
+              >
+                <option value="">Pilih Jenis Permohonan</option>
+                {jenisPermohonanOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              {errors.jenisPermohonan && (
+                <div className="invalid-feedback">{errors.jenisPermohonan[0]}</div>
+              )}
+            </div>
+
+            {/* Parent ID */}
+            <div className="mb-3">
+              <label htmlFor="parentId" className="form-label">Parent ID</label>
+              <input
+                type="number"
+                id="parentId"
+                name="parentId"
+                className={`form-control ${errors.parentId ? 'is-invalid' : ''}`}
+                value={form.parentId}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                placeholder="Masukkan ID Parent (opsional)"
+              />
+              {errors.parentId && (
+                <div className="invalid-feedback">{errors.parentId[0]}</div>
+              )}
+            </div>
+
+            {/* Keterangan */}
+            <div className="mb-3">
+              <label htmlFor="keterangan" className="form-label">Keterangan</label>
+              <textarea
+                id="keterangan"
+                name="keterangan"
+                className={`form-control ${errors.keterangan ? 'is-invalid' : ''}`}
+                value={form.keterangan}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                placeholder="Masukkan keterangan atau deskripsi tambahan (opsional)"
+                rows={4}
+              />
+              {errors.keterangan && (
+                <div className="invalid-feedback">{errors.keterangan[0]}</div>
+              )}
+            </div>
+
+            {/* Info Box */}
+            <div className="alert alert-info rounded-3">
+              <h6 className="alert-heading">Informasi Pengisian:</h6>
+              <ul className="mb-0 ps-3">
+                <li>Jenis Permohonan hanya dapat diisi dengan: <strong>Permohonan Baru</strong>, <strong>Perpanjangan</strong>, atau <strong>Pembaharuan</strong></li>
+                <li>Parent ID bersifat opsional dan harus berupa angka</li>
+                <li>Keterangan bersifat opsional</li>
+              </ul>
+            </div>
+
+            {/* Buttons */}
+            <div className="d-flex gap-3 mt-4">
+              <button
+                type="submit"
+                className="btn btn-success d-flex align-items-center px-4"
+                disabled={isSubmitting}
+              >
+                <span className="me-2">💾</span>
+                {isSubmitting ? "Menyimpan..." : "Simpan Data"}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary d-flex align-items-center px-4"
+                disabled={isSubmitting}
+                onClick={() => window.history.back()}
+              >
+                <span className="me-2">❌</span>
+                Batal
+              </button>
+            </div>
+          </form>
         </div>
-
-        {successMessage && (
-          <div className="alert alert-success d-flex align-items-center m-3" role="alert">
-            <span className="me-2" style={{ fontSize: '1.2rem' }}>✓</span>
-            {successMessage}
-          </div>
-        )}
-
-        <form className="card-body" onSubmit={handleSubmit} noValidate>
-          {/* Jenis Permohonan */}
-          <div className="mb-3">
-            <label htmlFor="jenisPermohonan" className="form-label">
-              Jenis Permohonan <span className="text-danger">*</span>
-            </label>
-            <select
-              id="jenisPermohonan"
-              name="jenisPermohonan"
-              className={`form-select ${errors.jenisPermohonan ? 'is-invalid' : ''}`}
-              value={form.jenisPermohonan}
-              onChange={handleChange}
-              disabled={isSubmitting}
-            >
-              <option value="">Pilih Jenis Permohonan</option>
-              {jenisPermohonanOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-            {errors.jenisPermohonan && (
-              <div className="invalid-feedback">{errors.jenisPermohonan[0]}</div>
-            )}
-          </div>
-
-          {/* Parent ID */}
-          <div className="mb-3">
-            <label htmlFor="parentId" className="form-label">Parent ID</label>
-            <input
-              type="number"
-              id="parentId"
-              name="parentId"
-              className={`form-control ${errors.parentId ? 'is-invalid' : ''}`}
-              value={form.parentId}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              placeholder="Masukkan ID Parent (opsional)"
-            />
-            {errors.parentId && (
-              <div className="invalid-feedback">{errors.parentId[0]}</div>
-            )}
-          </div>
-
-          {/* Keterangan */}
-          <div className="mb-3">
-            <label htmlFor="keterangan" className="form-label">Keterangan</label>
-            <textarea
-              id="keterangan"
-              name="keterangan"
-              className={`form-control ${errors.keterangan ? 'is-invalid' : ''}`}
-              value={form.keterangan}
-              onChange={handleChange}
-              disabled={isSubmitting}
-              placeholder="Masukkan keterangan atau deskripsi tambahan (opsional)"
-              rows={4}
-            />
-            {errors.keterangan && (
-              <div className="invalid-feedback">{errors.keterangan[0]}</div>
-            )}
-          </div>
-
-          {/* Info box */}
-          <div className="alert alert-info" role="alert">
-            <h6 className="alert-heading">Informasi Pengisian:</h6>
-            <ul className="mb-0 ps-3">
-              <li>Jenis Permohonan hanya dapat diisi dengan: <strong>Permohonan Baru</strong>, <strong>Perpanjangan</strong>, atau <strong>Pembaharuan</strong></li>
-              <li>Parent ID bersifat opsional dan harus berupa angka</li>
-              <li>Keterangan bersifat opsional</li>
-            </ul>
-          </div>
-
-          {/* Buttons */}
-          <div className="d-flex gap-3">
-            <button
-              type="submit"
-              className="btn btn-success d-flex align-items-center"
-              disabled={isSubmitting}
-            >
-              <span className="me-2">💾</span>
-              {isSubmitting ? "Menyimpan..." : "Simpan Data"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary d-flex align-items-center"
-              disabled={isSubmitting}
-              onClick={() => window.history.back()}
-            >
-              <span className="me-2">❌</span>
-              Batal
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   );

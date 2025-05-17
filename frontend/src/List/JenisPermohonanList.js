@@ -9,6 +9,10 @@ const JenisPermohonanList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
     axios
       .get(API)
       .then((res) => {
@@ -19,17 +23,17 @@ const JenisPermohonanList = () => {
         console.error("Gagal mengambil data:", err);
         setLoading(false);
       });
-  }, []);
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Yakin ingin menghapus data ini?")) {
       axios
         .delete(`${API}/${id}`)
         .then(() => {
-          setPosts(posts.filter((item) => item.id !== id));
+          setPosts((prevPosts) => prevPosts.filter((item) => item.id !== id));
         })
         .catch((err) => {
-          console.error("Gagal hapus:", err);
+          console.error("Gagal menghapus data:", err);
           alert("Terjadi kesalahan saat menghapus data.");
         });
     }
@@ -37,15 +41,15 @@ const JenisPermohonanList = () => {
 
   return (
     <div className="container my-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Data Jenis Permohonan</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold">Daftar Jenis Permohonan</h2>
         <Link to="/jenispermohonan/tambah" className="btn btn-primary">
           + Tambah Data
         </Link>
       </div>
 
       {loading ? (
-        <div className="d-flex justify-content-center align-items-center">
+        <div className="d-flex justify-content-center align-items-center py-5">
           <div className="spinner-border text-primary" role="status" />
           <span className="ms-2">Memuat data...</span>
         </div>
@@ -56,9 +60,9 @@ const JenisPermohonanList = () => {
           <table className="table table-striped table-hover align-middle">
             <thead className="table-light">
               <tr>
-                <th style={{ width: "60px" }} className="text-center">#</th>
+                <th className="text-center" style={{ width: "60px" }}>#</th>
                 <th>Jenis Permohonan</th>
-                <th style={{ width: "180px" }} className="text-center">Aksi</th>
+                <th className="text-center" style={{ width: "180px" }}>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -68,11 +72,11 @@ const JenisPermohonanList = () => {
                   <td>{item.jenisPermohonan}</td>
                   <td className="text-center">
                     <Link
-                      to={`/JenisPermohonan/edit/${item.id}`}
-                      className="btn btn-sm btn-warning text-white me-1"
+                      to={`/jenispermohonan/edit/${item.id}`}
+                      className="btn btn-sm btn-warning text-white me-2"
                       title="Edit Data"
                     >
-                      <i className="bi bi-pencil"></i>
+                      <i className="bi bi-pencil-square"></i>
                     </Link>
                     <button
                       onClick={() => handleDelete(item.id)}

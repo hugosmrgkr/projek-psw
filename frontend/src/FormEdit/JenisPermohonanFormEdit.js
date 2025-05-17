@@ -12,6 +12,7 @@ const EditPostForm = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -49,6 +50,7 @@ const EditPostForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors({});
+    setUpdating(true);
 
     axios
       .put(`${API}/${id}`, form)
@@ -63,6 +65,9 @@ const EditPostForm = () => {
           console.error("Gagal update data:", error);
           alert("Terjadi kesalahan saat menyimpan data.");
         }
+      })
+      .finally(() => {
+        setUpdating(false);
       });
   };
 
@@ -75,16 +80,23 @@ const EditPostForm = () => {
     );
 
   return (
-    <div className="container my-5" style={{ maxWidth: "700px" }}>
-      <div className="card shadow-sm">
-        <div className="card-header bg-success text-white fw-bold">
-          Edit Jenis Permohonan
-        </div>
+    <div className="container my-5" style={{ maxWidth: "750px" }}>
+      <h3 className="mb-4 fw-bold text-success">Edit Jenis Permohonan</h3>
+
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb mb-4">
+          <li className="breadcrumb-item"><a href="/jenispermohonan">Jenis Permohonan</a></li>
+          <li className="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+      </nav>
+
+      <div className="card shadow-sm border-0">
         <div className="card-body">
           <form onSubmit={handleSubmit} noValidate>
+            {/* Jenis Permohonan */}
             <div className="mb-3">
-              <label htmlFor="jenisPermohonan" className="form-label">
-                Jenis Permohonan
+              <label htmlFor="jenisPermohonan" className="form-label fw-semibold">
+                Jenis Permohonan <span className="text-danger">*</span>
               </label>
               <select
                 name="jenisPermohonan"
@@ -94,7 +106,7 @@ const EditPostForm = () => {
                 onChange={handleChange}
                 required
               >
-                <option value="">Pilih Jenis Permohonan</option>
+                <option value="">-- Pilih Jenis Permohonan --</option>
                 {jenisPermohonanOptions.map((option, index) => (
                   <option key={index} value={option}>
                     {option}
@@ -106,9 +118,10 @@ const EditPostForm = () => {
               )}
             </div>
 
+            {/* Parent ID */}
             <div className="mb-3">
-              <label htmlFor="parentId" className="form-label">
-                Parent ID (optional)
+              <label htmlFor="parentId" className="form-label fw-semibold">
+                Parent ID <span className="text-muted">(Opsional)</span>
               </label>
               <input
                 type="number"
@@ -117,15 +130,17 @@ const EditPostForm = () => {
                 name="parentId"
                 value={form.parentId}
                 onChange={handleChange}
+                placeholder="Isi jika ada ID induk"
               />
               {errors.parentId && (
                 <div className="invalid-feedback">{errors.parentId[0]}</div>
               )}
             </div>
 
+            {/* Keterangan */}
             <div className="mb-3">
-              <label htmlFor="keterangan" className="form-label">
-                Keterangan
+              <label htmlFor="keterangan" className="form-label fw-semibold">
+                Keterangan <span className="text-danger">*</span>
               </label>
               <textarea
                 className={`form-control ${errors.keterangan ? "is-invalid" : ""}`}
@@ -134,6 +149,7 @@ const EditPostForm = () => {
                 value={form.keterangan}
                 onChange={handleChange}
                 rows={4}
+                placeholder="Deskripsikan detail permohonan..."
                 required
               />
               {errors.keterangan && (
@@ -141,9 +157,22 @@ const EditPostForm = () => {
               )}
             </div>
 
-            <button type="submit" className="btn btn-success fw-bold">
-              Update
-            </button>
+            <div className="d-flex justify-content-between align-items-center mt-4">
+              <button
+                type="submit"
+                className="btn btn-success fw-bold px-4"
+                disabled={updating}
+              >
+                {updating ? "Menyimpan..." : "Update"}
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => navigate("/jenispermohonan")}
+              >
+                Batal
+              </button>
+            </div>
           </form>
         </div>
       </div>
