@@ -13,34 +13,57 @@ const JenisObjekRetribusiFormAdd = () => {
       jenisObjekRetribusi,
       keterangan,
     })
-      .then(() => navigate("/jenis-objek-retribusi"))
+      .then(() => {
+        alert("Data berhasil ditambahkan!");
+        navigate("/jenis-objek-retribusi");
+      })
       .catch(() => alert("Gagal menambah data."));
   };
 
+  const handleCancel = () => {
+    navigate("/jenis-objek-retribusi");
+  };
+
   return (
-    <div className="container mt-4">
-      <h2>Tambah Jenis Objek Retribusi</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Jenis Objek</label>
-          <input
-            type="text"
-            className="form-control"
-            value={jenisObjekRetribusi}
-            onChange={(e) => setJenis(e.target.value)}
-            required
-          />
+    <div className="container mt-5">
+      <div className="card shadow-sm">
+        <div className="card-header bg-primary text-white">
+          <h4 className="mb-0">➕ Tambah Jenis Objek Retribusi</h4>
         </div>
-        <div className="mb-3">
-          <label className="form-label">Keterangan</label>
-          <textarea
-            className="form-control"
-            value={keterangan}
-            onChange={(e) => setKeterangan(e.target.value)}
-          ></textarea>
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label fw-bold">Jenis Objek <span className="text-danger">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Contoh: Parkir, Pasar, Terminal"
+                value={jenisObjekRetribusi}
+                onChange={(e) => setJenis(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label fw-bold">Keterangan</label>
+              <textarea
+                className="form-control"
+                rows="3"
+                placeholder="Masukkan deskripsi atau penjelasan tambahan"
+                value={keterangan}
+                onChange={(e) => setKeterangan(e.target.value)}
+              ></textarea>
+            </div>
+            <div className="d-flex justify-content-between">
+              <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+                ❌ Batal
+              </button>
+              <button type="submit" className="btn btn-success">
+                💾 Simpan Data
+              </button>
+            </div>
+          </form>
         </div>
-        <button type="submit" className="btn btn-primary">Simpan</button>
-      </form>
+      </div>
     </div>
   );
 };

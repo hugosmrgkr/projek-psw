@@ -5,9 +5,11 @@ import { useNavigate, Link } from 'react-router-dom';
 const PermohonanSewaFormAdd = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
   const [jenisPermohonanOptions, setJenisPermohonanOptions] = useState([]);
-  const [tarifOptions, setTarifOptions] = useState([]);
-  
+  const [tarifObjekRetribusiOptions, setTarifObjekRetribusiOptions] = useState([]);
+
   const [form, setForm] = useState({
     idJenisPermohonan: '',
     nomorSuratPermohonan: '',
@@ -19,28 +21,19 @@ const PermohonanSewaFormAdd = () => {
   });
 
   useEffect(() => {
-    // Fetch jenis permohonan options
-    const fetchJenisPermohonan = async () => {
+    const fetchOptions = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/api/jenis-permohonan');
-        setJenisPermohonanOptions(res.data.data || []);
+        const jenisRes = await axios.get('http://localhost:8000/api/jenis-permohonan');
+        setJenisPermohonanOptions(jenisRes.data.data || []);
+
+        const tarifRes = await axios.get('http://localhost:8000/api/tarif-objek-retribusi');
+        setTarifObjekRetribusiOptions(tarifRes.data.data || []);
       } catch (error) {
-        console.error('Error fetching jenis permohonan:', error);
+        console.error('Gagal memuat data:', error);
       }
     };
 
-    // Fetch tarif options
-    const fetchTarifOptions = async () => {
-      try {
-        const res = await axios.get('http://localhost:8000/api/tarif-objek');
-        setTarifOptions(res.data.data || []);
-      } catch (error) {
-        console.error('Error fetching tarif options:', error);
-      }
-    };
-
-    fetchJenisPermohonan();
-    fetchTarifOptions();
+    fetchOptions();
   }, []);
 
   const handleChange = (e) => {
@@ -50,271 +43,160 @@ const PermohonanSewaFormAdd = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setIsSubmitting(true);
+
     try {
       await axios.post('http://localhost:8000/api/permohonan-sewa', form);
+      setErrors({});
       navigate('/permohonansewa');
     } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Gagal menyimpan data. Silakan coba lagi.');
+      if (error.response?.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        console.error('Error submitting form:', error);
+        alert('Gagal menyimpan data. Silakan coba lagi.');
+      }
+    } finally {
       setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const styles = {
-    container: {
-      padding: '20px',
-      maxWidth: '900px',
-      margin: '0 auto',
-      fontFamily: 'Arial, sans-serif',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '20px',
-      padding: '10px 0',
-    },
-    title: {
-      fontSize: '24px',
-      fontWeight: 'bold',
-      color: '#333',
-      margin: '0',
-    },
-    backButton: {
-      backgroundColor: '#e0e0e0',
-      color: '#333',
-      border: 'none',
-      borderRadius: '4px',
-      padding: '8px 15px',
-      cursor: 'pointer',
-      textDecoration: 'none',
-      fontSize: '14px',
-      display: 'inline-flex',
-      alignItems: 'center',
-    },
-    card: {
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      overflow: 'hidden',
-      padding: '20px',
-    },
-    form: {
-      width: '100%',
-    },
-    formGroup: {
-      marginBottom: '20px',
-    },
-    label: {
-      display: 'block',
-      marginBottom: '8px',
-      fontWeight: 'bold',
-      color: '#333',
-      fontSize: '14px',
-    },
-    input: {
-      width: '100%',
-      padding: '10px',
-      borderRadius: '4px',
-      border: '1px solid #e0e0e0',
-      fontSize: '14px',
-      boxSizing: 'border-box',
-    },
-    select: {
-      width: '100%',
-      padding: '10px',
-      borderRadius: '4px',
-      border: '1px solid #e0e0e0',
-      fontSize: '14px',
-      backgroundColor: 'white',
-      boxSizing: 'border-box',
-    },
-    textarea: {
-      width: '100%',
-      padding: '10px',
-      borderRadius: '4px',
-      border: '1px solid #e0e0e0',
-      fontSize: '14px',
-      minHeight: '100px',
-      boxSizing: 'border-box',
-      resize: 'vertical',
-    },
-    buttonsContainer: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      gap: '10px',
-      marginTop: '20px',
-    },
-    cancelButton: {
-      padding: '10px 20px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      border: '1px solid #e0e0e0',
-      backgroundColor: 'white',
-      color: '#333',
-      fontSize: '14px',
-      fontWeight: 'bold',
-    },
-    submitButton: {
-      padding: '10px 20px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      border: 'none',
-      backgroundColor: '#2e51a2',
-      color: 'white',
-      fontSize: '14px',
-      fontWeight: 'bold',
-    },
-    disabledButton: {
-      opacity: 0.7,
-      cursor: 'not-allowed',
-    },
-    formRow: {
-      display: 'flex',
-      gap: '20px',
-      marginBottom: '20px',
-    },
-    formColumn: {
-      flex: 1,
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Tambah Permohonan Sewa</h2>
-        <Link to="/permohonansewa" style={styles.backButton}>
-          Kembali
-        </Link>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Tambah Permohonan Sewa</h2>
+        <Link to="/permohonansewa" className="btn btn-secondary">Kembali</Link>
       </div>
 
-      <div style={styles.card}>
-        <form style={styles.form} onSubmit={handleSubmit}>
-          <div style={styles.formRow}>
-            <div style={styles.formColumn}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Jenis Permohonan</label>
-                <select 
-                  name="idJenisPermohonan" 
-                  value={form.idJenisPermohonan}
-                  onChange={handleChange}
-                  style={styles.select}
-                  required
-                >
-                  <option value="">Pilih Jenis Permohonan</option>
-                  {jenisPermohonanOptions.map(option => (
-                    <option key={option.idJenisPermohonan} value={option.idJenisPermohonan}>
-                      {option.namaJenisPermohonan}
-                    </option>
-                  ))}
-                </select>
+      <div className="card">
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <div className="col-md-6">
+                {/* Jenis Permohonan */}
+                <div className="mb-3">
+                  <label htmlFor="idJenisPermohonan" className="form-label">Jenis Permohonan *</label>
+                  <select
+                    id="idJenisPermohonan"
+                    name="idJenisPermohonan"
+                    value={form.idJenisPermohonan}
+                    onChange={handleChange}
+                    className={`form-select ${errors.idJenisPermohonan ? 'is-invalid' : ''}`}
+                    disabled={isSubmitting}
+                    required
+                  >
+                    <option value="">Pilih Jenis Permohonan</option>
+                    {jenisPermohonanOptions.map((option) => (
+                      <option key={option.idJenisPermohonan || option.id} value={option.idJenisPermohonan || option.id}>
+                        {option.jenisPermohonan}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.idJenisPermohonan && <div className="invalid-feedback">{errors.idJenisPermohonan[0]}</div>}
+                </div>
+
+                {/* Nomor Surat */}
+                <div className="mb-3">
+                  <label className="form-label">Nomor Surat Permohonan</label>
+                  <input
+                    name="nomorSuratPermohonan"
+                    className="form-control"
+                    value={form.nomorSuratPermohonan}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Tanggal */}
+                <div className="mb-3">
+                  <label className="form-label">Tanggal Pengajuan</label>
+                  <input
+                    type="date"
+                    name="tanggalPengajuan"
+                    className="form-control"
+                    value={form.tanggalPengajuan}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Nomor Surat Permohonan</label>
-                <input 
-                  name="nomorSuratPermohonan" 
-                  placeholder="Masukkan nomor surat permohonan" 
-                  value={form.nomorSuratPermohonan}
-                  onChange={handleChange} 
-                  style={styles.input}
-                  required
-                />
-              </div>
-              
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Tanggal Pengajuan</label>
-                <input 
-                  type="date" 
-                  name="tanggalPengajuan" 
-                  value={form.tanggalPengajuan}
-                  onChange={handleChange} 
-                  style={styles.input}
-                  required
-                />
-              </div>
-            </div>
-            
-            <div style={styles.formColumn}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Nama Pemohon</label>
-                <input 
-                  name="namaPemohon" 
-                  placeholder="Masukkan nama pemohon" 
-                  value={form.namaPemohon}
-                  onChange={handleChange} 
-                  style={styles.input}
-                  required
-                />
-              </div>
-              
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Alamat Pemohon</label>
-                <textarea 
-                  name="alamatPemohon" 
-                  placeholder="Masukkan alamat lengkap pemohon" 
-                  value={form.alamatPemohon}
-                  onChange={handleChange}
-                  style={styles.textarea}
-                  required
-                ></textarea>
-              </div>
-            </div>
-          </div>
-          
-          <div style={styles.formRow}>
-            <div style={styles.formColumn}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Tarif Objek Retribusi</label>
-                <select 
-                  name="idTarifObjekRetribusi" 
-                  value={form.idTarifObjekRetribusi}
-                  onChange={handleChange}
-                  style={styles.select}
-                  required
-                >
-                  <option value="">Pilih Tarif Objek</option>
-                  {tarifOptions.map(option => (
-                    <option key={option.idTarifObjekRetribusi} value={option.idTarifObjekRetribusi}>
-                      {option.namaTarifObjek || option.deskripsi} - Rp {option.nilaiTarif?.toLocaleString('id-ID')}
-                    </option>
-                  ))}
-                </select>
+
+              <div className="col-md-6">
+                {/* Nama Pemohon */}
+                <div className="mb-3">
+                  <label className="form-label">Nama Pemohon</label>
+                  <input
+                    name="namaPemohon"
+                    className="form-control"
+                    value={form.namaPemohon}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Alamat Pemohon */}
+                <div className="mb-3">
+                  <label className="form-label">Alamat Pemohon</label>
+                  <textarea
+                    name="alamatPemohon"
+                    className="form-control"
+                    value={form.alamatPemohon}
+                    onChange={handleChange}
+                    required
+                  ></textarea>
+                </div>
               </div>
             </div>
-            
-            <div style={styles.formColumn}>
-              <div style={styles.formGroup}>
-                <label style={styles.label}>Keterangan</label>
-                <textarea 
-                  name="keterangan" 
-                  placeholder="Masukkan keterangan tambahan (opsional)" 
-                  value={form.keterangan}
-                  onChange={handleChange}
-                  style={styles.textarea}
-                ></textarea>
+
+            {/* Tarif dan Keterangan */}
+            <div className="row">
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Tarif Objek Retribusi</label>
+                  <select
+                    name="idTarifObjekRetribusi"
+                    value={form.idTarifObjekRetribusi}
+                    onChange={handleChange}
+                    className="form-select"
+                    required
+                  >
+                    <option value="">Pilih Tarif Objek</option>
+                    {tarifObjekRetribusiOptions.map((option) => (
+                      <option
+                        key={option.idTarifObjekRetribusi}
+                        value={option.idTarifObjekRetribusi}
+                      >
+                        Rp {option.nominalTarif?.toLocaleString('id-ID')} - {option.namaPenilai || option.keterangan || '-'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">Keterangan</label>
+                  <textarea
+                    name="keterangan"
+                    className="form-control"
+                    value={form.keterangan}
+                    onChange={handleChange}
+                    placeholder="Opsional"
+                  ></textarea>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div style={styles.buttonsContainer}>
-            <Link to="/permohonansewa">
-              <button type="button" style={styles.cancelButton}>
-                Batal
+
+            {/* Buttons */}
+            <div className="d-flex justify-content-end gap-2">
+              <Link to="/permohonansewa" className="btn btn-outline-secondary">Batal</Link>
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? 'Menyimpan...' : 'Simpan'}
               </button>
-            </Link>
-            <button 
-              type="submit" 
-              style={{
-                ...styles.submitButton,
-                ...(loading ? styles.disabledButton : {})
-              }}
-              disabled={loading}
-            >
-              {loading ? 'Menyimpan...' : 'Simpan'}
-            </button>
-          </div>
-        </form>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const DetailJenisPermohonan = () => {
     axios
       .get(`${API}/${id}`)
       .then((res) => {
-        setData(res.data.data); // ✅ ambil dari dalam "data"
+        setData(res.data.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -23,80 +23,50 @@ const DetailJenisPermohonan = () => {
       });
   }, [id]);
 
-  const styles = {
-    container: {
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-    },
-    header: {
-      backgroundColor: '#536878',
-      color: 'white',
-      padding: '16px 24px',
-      borderRadius: '8px 8px 0 0',
-      fontWeight: 'bold',
-      fontSize: '18px',
-    },
-    content: {
-      backgroundColor: '#fff',
-      border: '1px solid #e0e0e0',
-      borderTop: 'none',
-      padding: '24px',
-      borderRadius: '0 0 8px 8px',
-    },
-    label: {
-      fontWeight: 'bold',
-      marginTop: '16px',
-      display: 'block',
-      color: '#333',
-    },
-    value: {
-      marginBottom: '12px',
-    },
-    backLink: {
-      display: 'inline-block',
-      marginTop: '20px',
-      textDecoration: 'none',
-      color: '#536878',
-      fontWeight: 'bold',
-    },
-    loadingText: {
-      textAlign: 'center',
-      padding: '20px',
-      fontSize: '16px',
-      color: '#536878',
-    },
-  };
-
-  if (loading) return <p style={styles.loadingText}>Memuat detail data...</p>;
-  if (!data) return <p style={styles.loadingText}>Data tidak ditemukan.</p>;
+  if (loading) return <div className="text-center mt-5">Memuat detail data...</div>;
+  if (!data) return <div className="text-center mt-5">Data tidak ditemukan.</div>;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>Detail Jenis Permohonan</div>
-      <div style={styles.content}>
-        <div>
-          <span style={styles.label}>ID:</span>
-          <div style={styles.value}>{data.id}</div>
-
-          <span style={styles.label}>Jenis Permohonan:</span>
-          <div style={styles.value}>{data.jenisPermohonan}</div>
-
-          <span style={styles.label}>Parent ID:</span>
-          <div style={styles.value}>{data.parentId ?? '-'}</div>
-
-          <span style={styles.label}>Keterangan:</span>
-          <div style={styles.value}>{data.keterangan}</div>
-
-          <span style={styles.label}>Dibuat pada:</span>
-          <div style={styles.value}>{new Date(data.created_at).toLocaleString()}</div>
-
-          <span style={styles.label}>Terakhir diupdate:</span>
-          <div style={styles.value}>{new Date(data.updated_at).toLocaleString()}</div>
+    <div className="container my-5">
+      <div className="card shadow">
+        <div className="card-header bg-primary text-white">
+          <h5 className="mb-0">Detail Jenis Permohonan</h5>
         </div>
+        <div className="card-body">
+          <div className="mb-3">
+            <strong>ID:</strong>
+            <div>{data.id}</div>
+          </div>
 
-        <Link to="/" style={styles.backLink}>← Kembali ke Daftar</Link>
+          <div className="mb-3">
+            <strong>Jenis Permohonan:</strong>
+            <div>{data.jenisPermohonan}</div>
+          </div>
+
+          <div className="mb-3">
+            <strong>Parent ID:</strong>
+            <div>{data.parentId ?? '-'}</div>
+          </div>
+
+          <div className="mb-3">
+            <strong>Keterangan:</strong>
+            <div>{data.keterangan}</div>
+          </div>
+
+          <div className="mb-3">
+            <strong>Dibuat pada:</strong>
+            <div>{new Date(data.created_at).toLocaleString()}</div>
+          </div>
+
+          <div className="mb-3">
+            <strong>Terakhir diupdate:</strong>
+            <div>{new Date(data.updated_at).toLocaleString()}</div>
+          </div>
+
+          <Link to="/" className="btn btn-secondary mt-3">
+            ← Kembali ke Daftar
+          </Link>
+        </div>
       </div>
     </div>
   );

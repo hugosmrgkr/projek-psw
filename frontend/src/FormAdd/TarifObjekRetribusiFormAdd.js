@@ -1,5 +1,4 @@
-// src/pages/TarifObjekRetribusi/TarifAdd.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,11 +11,26 @@ const TarifObjekRetribusiFormAdd = () => {
     namaPenilai: '',
     nominalTarif: ''
   });
-  
+
+  const [objekRetribusiList, setObjekRetribusiList] = useState([]);
+  const [jenisJangkaWaktuList, setJenisJangkaWaktuList] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // Ambil data dropdown
+    axios.get('http://localhost:8000/api/objek-retribusi')
+      .then(res => setObjekRetribusiList(res.data.data))
+      .catch(err => console.error('Gagal ambil data objek retribusi:', err));
+
+    axios.get('http://localhost:8000/api/jenis-jangka-waktu')
+      .then(res => setJenisJangkaWaktuList(res.data.data))
+      .catch(err => console.error('Gagal ambil data jangka waktu:', err));
+  }, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -24,226 +38,122 @@ const TarifObjekRetribusiFormAdd = () => {
       alert('Data berhasil ditambahkan.');
       navigate('/tarif');
     } catch (error) {
-      console.error('Gagal menyimpan data:', error);
-      alert('Terjadi kesalahan saat menyimpan data.');
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        alert('Terjadi kesalahan saat menyimpan data.');
+        console.error(error);
+      }
     }
   };
-  
+
+  const styles = {
+    container: { maxWidth: 600, margin: '0 auto', padding: 20 },
+    form: { display: 'flex', flexDirection: 'column' },
+    formGroup: { marginBottom: 15 },
+    input: { width: '100%', padding: 8 },
+    error: { color: 'red', marginTop: 5 },
+    formActions: { display: 'flex', justifyContent: 'space-between' },
+    saveButton: { padding: '10px 20px', backgroundColor: '#4CAF50', color: '#fff', border: 'none' },
+    cancelButton: { padding: '10px 20px', backgroundColor: '#f44336', color: '#fff', textDecoration: 'none' },
+  };
+
   return (
     <div style={styles.container}>
-      <div style={styles.headerContainer}>
-        <div style={styles.headerTitle}>
-          <div style={styles.blueBar}></div>
-          <h2 style={styles.heading}>Tambah Tarif Objek Retribusi</h2>
-        </div>
-      </div>
-      
-      <p style={styles.instructions}>
-        Silakan isi formulir di bawah ini untuk menambahkan tarif objek retribusi baru.
-      </p>
-      
-      <div style={styles.divider}></div>
-      
+      <h2>Tambah Tarif Objek Retribusi</h2>
       <form onSubmit={handleSubmit} style={styles.form}>
+        {/* Objek Retribusi */}
         <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Objek Retribusi <span style={styles.required}>*</span>
-          </label>
-          <input
-            type="text"
+          <label>Objek Retribusi *</label>
+          <select
             name="idObjekRetribusi"
-            placeholder="Masukkan objek retribusi"
             onChange={handleChange}
+            value={form.idObjekRetribusi}
             required
             style={styles.input}
-          />
-          <div style={styles.helperText}>Contoh: Kios Pasar, Parkir Mall, Terminal Bus</div>
+          >
+            <option value="">-- Pilih Objek --</option>
+            {objekRetribusiList.map(objek => (
+              <option key={objek.idObjekRetribusi} value={objek.idObjekRetribusi}>
+                {objek.kodeObjekRetribusi} - {objek.alamat}
+              </option>
+            ))}
+          </select>
+          {errors.idObjekRetribusi && <div style={styles.error}>{errors.idObjekRetribusi[0]}</div>}
         </div>
-        
+
+        {/* Jenis Jangka Waktu */}
         <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Jenis Jangka Waktu <span style={styles.required}>*</span>
-          </label>
-          <input
-            type="text"
+          <label>Jenis Jangka Waktu *</label>
+          <select
             name="idJenisJangkaWaktu"
-            placeholder="Masukkan jenis jangka waktu"
             onChange={handleChange}
+            value={form.idJenisJangkaWaktu}
             required
             style={styles.input}
-          />
-          <div style={styles.helperText}>Contoh: Harian, Bulanan, Tahunan</div>
+          >
+            <option value="">-- Pilih Jangka Waktu --</option>
+            {jenisJangkaWaktuList.map(jangka => (
+              <option key={jangka.idJenisJangkaWaktu} value={jangka.idJenisJangkaWaktu}>
+                {jangka.jenisJangkaWaktu}
+              </option>
+            ))}
+          </select>
+          {errors.idJenisJangkaWaktu && <div style={styles.error}>{errors.idJenisJangkaWaktu[0]}</div>}
         </div>
-        
+
+        {/* Tanggal Dinilai */}
         <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Tanggal Dinilai <span style={styles.required}>*</span>
-          </label>
+          <label>Tanggal Dinilai *</label>
           <input
             type="date"
             name="tanggalDinilai"
             onChange={handleChange}
+            value={form.tanggalDinilai}
             required
             style={styles.input}
           />
+          {errors.tanggalDinilai && <div style={styles.error}>{errors.tanggalDinilai[0]}</div>}
         </div>
-        
+
+        {/* Nama Penilai */}
         <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Nama Penilai <span style={styles.required}>*</span>
-          </label>
+          <label>Nama Penilai *</label>
           <input
             type="text"
             name="namaPenilai"
             placeholder="Masukkan nama penilai"
             onChange={handleChange}
+            value={form.namaPenilai}
             required
             style={styles.input}
           />
+          {errors.namaPenilai && <div style={styles.error}>{errors.namaPenilai[0]}</div>}
         </div>
-        
+
+        {/* Nominal Tarif */}
         <div style={styles.formGroup}>
-          <label style={styles.label}>
-            Nominal Tarif <span style={styles.required}>*</span>
-          </label>
+          <label>Nominal Tarif (Rp) *</label>
           <input
             type="number"
             name="nominalTarif"
             placeholder="Masukkan nominal tarif"
             onChange={handleChange}
+            value={form.nominalTarif}
             required
             style={styles.input}
           />
-          <div style={styles.helperText}>Dalam satuan Rupiah (Rp)</div>
+          {errors.nominalTarif && <div style={styles.error}>{errors.nominalTarif[0]}</div>}
         </div>
-        
+
+        {/* Tombol Aksi */}
         <div style={styles.formActions}>
-          <button type="submit" style={styles.saveButton}>
-            <span style={styles.saveIcon}>💾</span> Simpan Data
-          </button>
-          <Link to="/tarif" style={styles.cancelButton}>
-            <span style={styles.cancelIcon}>✖</span> Batal
-          </Link>
+          <button type="submit" style={styles.saveButton}>💾 Simpan</button>
+          <Link to="/tarif" style={styles.cancelButton}>✖ Batal</Link>
         </div>
       </form>
     </div>
   );
-};
-
-// Embedded styles
-const styles = {
-  container: {
-    fontFamily: 'Arial, sans-serif',
-    padding: '20px',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '5px',
-    width: '100%',
-    boxSizing: 'border-box',
-  },
-  headerContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  headerTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  blueBar: {
-    width: '4px',
-    height: '32px',
-    backgroundColor: '#4054b2',
-    marginRight: '15px',
-    borderRadius: '2px',
-  },
-  heading: {
-    color: '#333',
-    fontSize: '24px',
-    margin: '0',
-  },
-  instructions: {
-    color: '#666',
-    margin: '0 0 20px 0',
-  },
-  divider: {
-    height: '1px',
-    backgroundColor: '#e0e0e0',
-    margin: '20px 0',
-  },
-  form: {
-    backgroundColor: '#fff',
-    padding: '25px',
-    borderRadius: '5px',
-    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.05)',
-  },
-  formGroup: {
-    marginBottom: '20px',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '8px',
-    fontWeight: '500',
-    color: '#333',
-  },
-  required: {
-    color: '#d32f2f',
-  },
-  input: {
-    width: '100%',
-    padding: '12px 15px',
-    boxSizing: 'border-box',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
-    transition: 'border-color 0.3s',
-    outline: 'none',
-  },
-  helperText: {
-    fontSize: '12px',
-    color: '#777',
-    marginTop: '5px',
-  },
-  formActions: {
-    display: 'flex',
-    gap: '15px',
-    marginTop: '30px',
-  },
-  saveButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '12px 24px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
-  },
-  saveIcon: {
-    marginRight: '8px',
-  },
-  cancelButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '12px 24px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    transition: 'background-color 0.3s',
-  },
-  cancelIcon: {
-    marginRight: '8px',
-  },
 };
 
 export default TarifObjekRetribusiFormAdd;

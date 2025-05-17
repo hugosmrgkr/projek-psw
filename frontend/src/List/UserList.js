@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const API = "http://localhost:8000/api/users";
+const API = "http://localhost:8000/api/user";
+
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
