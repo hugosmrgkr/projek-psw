@@ -41,13 +41,14 @@ const PermohonanSewaList = () => {
               <div className="text-center p-4">Tidak ada data permohonan sewa.</div>
             ) : (
               <div className="table-responsive">
-                <table className="table table-striped table-hover table-bordered mb-0">
-                  <thead className="table-dark">
+                <table className="table table-bordered table-striped table-hover mb-0">
+                  <thead className="table-dark text-center">
                     <tr>
                       <th>No</th>
                       <th>Nomor Surat</th>
                       <th>Tanggal</th>
                       <th>Nama Pemohon</th>
+                      <th>No. Telepon</th>
                       <th>Alamat</th>
                       <th>Jenis Permohonan</th>
                       <th>Tarif</th>
@@ -57,10 +58,11 @@ const PermohonanSewaList = () => {
                   <tbody>
                     {permohonanList.map((item, index) => (
                       <tr key={item.idPermohonanSewa || index}>
-                        <td>{index + 1}</td>
+                        <td className="text-center">{index + 1}</td>
                         <td>{item.nomorSuratPermohonan}</td>
                         <td>{item.tanggalPengajuan}</td>
                         <td>{item.namaPemohon}</td>
+                        <td>{item.noTeleponPemohon || '-'}</td>
                         <td>{item.alamatPemohon}</td>
                         <td>{item.jenis_permohonan?.jenisPermohonan || '-'}</td>
                         <td>Rp {item.tarif_objek_retribusi?.nominalTarif?.toLocaleString('id-ID') || '0'}</td>
