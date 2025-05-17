@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\TarifObjekRetribusiController;
 use App\Http\Controllers\Api\PermohonanSewaController;
 use App\Http\Controllers\AuthController;
 
-// Route login dengan controller yang benar
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::apiResource('permohonan-sewa', PermohonanSewaController::class);

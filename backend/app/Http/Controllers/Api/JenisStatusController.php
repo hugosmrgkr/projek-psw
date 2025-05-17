@@ -11,14 +11,15 @@ class JenisStatusController extends Controller
 {
     public function index()
     {
-        $data = JenisStatus::where('isDeleted', false)->get();
+        // SoftDeletes otomatis exclude data yang sudah dihapus
+        $data = JenisStatus::all();
         return JenisStatusResource::collection($data);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'jenisStatus' => 'required|in:Proses,Disetujui,Ditolak,Dibatalkan',
+            'status' => 'required|in:Proses,Disetujui,Ditolak,Dibatalkan',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -37,7 +38,7 @@ class JenisStatusController extends Controller
         $data = JenisStatus::findOrFail($id);
 
         $validated = $request->validate([
-            'jenisStatus' => 'sometimes|in:Proses,Disetujui,Ditolak,Dibatalkan',
+            'status' => 'sometimes|in:Proses,Disetujui,Ditolak,Dibatalkan',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -48,7 +49,7 @@ class JenisStatusController extends Controller
     public function destroy($id)
     {
         $data = JenisStatus::findOrFail($id);
-        $data->update(['isDeleted' => true]);
+        // Cukup panggil delete untuk softDeletes
         $data->delete();
 
         return response()->json(['message' => 'Data berhasil dihapus'], 200);
