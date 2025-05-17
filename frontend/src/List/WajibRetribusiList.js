@@ -34,56 +34,76 @@ function WajibRetribusiList() {
   }, []);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ borderLeft: '5px solid #2a3c85', paddingLeft: '10px' }}>Daftar Wajib Retribusi</h2>
+    <div className="container py-4" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="border-start border-4 border-primary ps-3 mb-0">
+          Daftar Wajib Retribusi
+        </h2>
         <button
+          className="btn btn-primary"
           onClick={() => navigate('/wajibretribusi/tambah')}
-          style={{ padding: '8px 16px', background: '#2a3c85', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
         >
           + Tambah
         </button>
       </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <thead>
-          <tr style={{ background: '#2a3c85', color: 'white' }}>
-            <th style={{ padding: '10px', border: '1px solid #ccc' }}>NIK</th>
-            <th style={{ padding: '10px', border: '1px solid #ccc' }}>Nama</th>
-            <th style={{ padding: '10px', border: '1px solid #ccc' }}>Alamat</th>
-            <th style={{ padding: '10px', border: '1px solid #ccc' }}>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item.idWajibRetribusi}>
-              <td style={{ padding: '10px', border: '1px solid #ccc' }}>{item.NIK}</td>
-              <td style={{ padding: '10px', border: '1px solid #ccc' }}>{item.namaWajibRetribusi}</td>
-              <td style={{ padding: '10px', border: '1px solid #ccc' }}>{item.alamat}</td>
-              <td style={{ padding: '10px', border: '1px solid #ccc' }}>
-                <button
-                  onClick={() => navigate(`/wajibretribusi/show/${item.idWajibRetribusi}`)}
-                  style={{ marginRight: '5px', background: '#4caf50', color: 'white', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}
-                >
-                  👁️
-                </button>
-                <button
-                  onClick={() => navigate(`/wajibretribusi/edit/${item.idWajibRetribusi}`)}
-                  style={{ marginRight: '5px', background: '#fbc02d', color: 'white', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}
-                >
-                  ✏️
-                </button>
-                <button
-                  onClick={() => handleDelete(item.idWajibRetribusi)}
-                  style={{ background: '#e53935', color: 'white', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}
-                >
-                  🗑️
-                </button>
-              </td>
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover align-middle">
+          <thead className="table-primary">
+            <tr>
+              <th scope="col">NIK</th>
+              <th scope="col">Nama</th>
+              <th scope="col">Alamat</th>
+              <th scope="col" style={{ minWidth: '140px' }}>Aksi</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((item) => (
+                <tr key={item.idWajibRetribusi}>
+                  <td>{item.NIK}</td>
+                  <td>{item.namaWajibRetribusi}</td>
+                  <td>{item.alamat}</td>
+                  <td>
+                    <div className="btn-group" role="group" aria-label="Aksi">
+                      <button
+                        type="button"
+                        className="btn btn-success btn-sm"
+                        title="Lihat Detail"
+                        onClick={() => navigate(`/wajibretribusi/show/${item.idWajibRetribusi}`)}
+                      >
+                        👁️
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-warning btn-sm"
+                        title="Edit"
+                        onClick={() => navigate(`/wajibretribusi/edit/${item.idWajibRetribusi}`)}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        title="Hapus"
+                        onClick={() => handleDelete(item.idWajibRetribusi)}
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center py-4">
+                  Tidak ada data
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

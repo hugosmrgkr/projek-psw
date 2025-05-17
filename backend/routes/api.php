@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\WajibRetribusiController;
 use App\Http\Controllers\Api\TarifObjekRetribusiController;
 use App\Http\Controllers\Api\PermohonanSewaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\UserController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -30,4 +31,4 @@ Route::post('lokasi-objek-retribusi/{id}/restore', [LokasiObjekRetribusiControll
 Route::apiResource('jangka-waktu-sewa', JangkaWaktuSewaController::class);
 Route::apiResource('/jenis-jangka-waktu', JenisJangkaWaktuController::class);
 Route::apiResource('jenis-permohonan', JenisPermohonanController::class);
-Route::apiResource('user', AuthController::class);
+Route::apiResource('user', UserController::class);

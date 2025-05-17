@@ -30,146 +30,58 @@ function PeruntukanSewaList() {
     }
   };
 
-  const styles = {
-    container: {
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '15px 0',
-      borderLeft: '5px solid #3949AB',
-      paddingLeft: '15px',
-      marginBottom: '20px',
-    },
-    title: {
-      margin: '0',
-      color: '#333',
-      fontSize: '20px',
-      fontWeight: 'bold',
-    },
-    addButton: {
-      backgroundColor: '#3949AB',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      padding: '10px 15px',
-      cursor: 'pointer',
-      fontWeight: 'bold',
-      display: 'flex',
-      alignItems: 'center',
-      fontSize: '14px',
-    },
-    plusIcon: {
-      marginRight: '5px',
-      fontSize: '16px',
-    },
-    tableContainer: {
-      backgroundColor: '#f9f9f9',
-      borderRadius: '4px',
-      padding: '15px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-    },
-    table: {
-      width: '100%',
-      borderCollapse: 'collapse',
-      backgroundColor: 'white',
-    },
-    tableHeader: {
-      backgroundColor: '#f4f4f4',
-      textAlign: 'left',
-      padding: '12px 15px',
-      borderBottom: '1px solid #ddd',
-      color: '#333',
-      fontWeight: 'bold',
-    },
-    tableCell: {
-      padding: '12px 15px',
-      borderBottom: '1px solid #ddd',
-    },
-    actionCell: {
-      display: 'flex',
-      gap: '8px',
-    },
-    editButton: {
-      backgroundColor: '#4CAF50',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      padding: '6px 12px',
-      cursor: 'pointer',
-      fontSize: '12px',
-    },
-    deleteButton: {
-      backgroundColor: '#F44336',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      padding: '6px 12px',
-      cursor: 'pointer',
-      fontSize: '12px',
-    },
-    emptyState: {
-      textAlign: 'center',
-      padding: '20px',
-      color: '#666',
-    },
-    pagination: {
-      textAlign: 'right',
-      padding: '10px 0',
-      color: '#666',
-      fontSize: '14px',
-    }
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Daftar Peruntukan Sewa</h2>
-        <button 
-          style={styles.addButton} 
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="border-start border-4 border-primary ps-3 mb-0">Daftar Peruntukan Sewa</h2>
+        <button
+          className="btn btn-success"
           onClick={() => navigate('/peruntukansewa/add')}
         >
-          <span style={styles.plusIcon}>+</span> Tambah Data
+          <span className="me-2 fs-4">+</span> Tambah Data
         </button>
       </div>
-      
-      <div style={styles.tableContainer}>
-        <table style={styles.table}>
-          <thead>
+
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover align-middle">
+          <thead className="table-dark">
             <tr>
-              <th style={styles.tableHeader}>Jenis Kegiatan</th>
-              <th style={styles.tableHeader}>Peruntukan</th>
-              <th style={styles.tableHeader}>Keterangan</th>
-              <th style={styles.tableHeader}>Aksi</th>
+              <th>Jenis Kegiatan</th>
+              <th>Peruntukan</th>
+              <th>Keterangan</th>
+              <th style={{ minWidth: "200px" }}>Aksi</th>
             </tr>
           </thead>
           <tbody>
             {data.length > 0 ? (
               data.map((item) => (
                 <tr key={item.idPeruntukanSewa}>
-                  <td style={styles.tableCell}>{item.jenisKegiatan}</td>
-                  <td style={styles.tableCell}>{item.peruntukanSewa}</td>
-                  <td style={styles.tableCell}>{item.keterangan}</td>
-                  <td style={styles.tableCell}>
-                    <div style={styles.actionCell}>
-                      <button 
-                        style={{ ...styles.editButton, backgroundColor: '#2196F3' }} 
+                  <td>{item.jenisKegiatan}</td>
+                  <td>{item.peruntukanSewa}</td>
+                  <td>{item.keterangan}</td>
+                  <td>
+                    <div className="btn-group" role="group" aria-label="Aksi">
+                      <button
+                        type="button"
+                        className="btn btn-info btn-sm"
                         onClick={() => navigate(`/peruntukansewa/${item.idPeruntukanSewa}`)}
+                        title="Detail"
                       >
                         Detail
                       </button>
-                      <button 
-                        style={styles.editButton} 
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
                         onClick={() => navigate(`/peruntukansewa/edit/${item.idPeruntukanSewa}`)}
+                        title="Edit"
                       >
                         Edit
                       </button>
-                      <button 
-                        style={styles.deleteButton} 
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
                         onClick={() => handleDelete(item.idPeruntukanSewa)}
+                        title="Hapus"
                       >
                         Hapus
                       </button>
@@ -179,19 +91,20 @@ function PeruntukanSewaList() {
               ))
             ) : (
               <tr>
-                <td colSpan="4" style={styles.emptyState}>
+                <td colSpan="4" className="text-center py-4">
                   Tidak ada data
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-        {data.length > 0 && (
-          <div style={styles.pagination}>
-            Menampilkan {data.length} dari {data.length} data
-          </div>
-        )}
       </div>
+
+      {data.length > 0 && (
+        <div className="text-muted mt-3">
+          Menampilkan {data.length} dari {data.length} data
+        </div>
+      )}
     </div>
   );
 }

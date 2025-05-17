@@ -17,6 +17,7 @@ const FormTambahJenisJangkaWaktu = () => {
       setKeterangan("");
     } catch (error) {
       console.error("Gagal menambahkan data:", error);
+      alert("Gagal menambahkan data. Silakan coba lagi.");
     }
   };
 
@@ -26,30 +27,36 @@ const FormTambahJenisJangkaWaktu = () => {
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "600px" }}>
-      <h2 className="mb-4">Tambah Jenis Jangka Waktu</h2>
+    <div
+      className="container mt-5 p-4 bg-light rounded shadow-sm"
+      style={{ maxWidth: "600px" }}
+    >
+      <h2 className="mb-4 text-center text-primary fw-bold">
+        Tambah Jenis Jangka Waktu
+      </h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="jenisJangkaWaktu" className="form-label">
-            Jenis Jangka Waktu
+        <div className="mb-4">
+          <label htmlFor="jenisJangkaWaktu" className="form-label fw-semibold">
+            Jenis Jangka Waktu <span className="text-danger">*</span>
           </label>
           <input
             type="text"
-            className="form-control"
+            className="form-control form-control-lg border-primary"
             id="jenisJangkaWaktu"
             placeholder="Masukkan jenis jangka waktu"
             value={jenisJangkaWaktu}
             onChange={(e) => setJenisJangkaWaktu(e.target.value)}
             required
+            autoFocus
           />
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="keterangan" className="form-label">
+        <div className="mb-4">
+          <label htmlFor="keterangan" className="form-label fw-semibold">
             Keterangan
           </label>
           <textarea
-            className="form-control"
+            className="form-control border-primary"
             id="keterangan"
             rows="4"
             placeholder="Masukkan keterangan"
@@ -58,15 +65,15 @@ const FormTambahJenisJangkaWaktu = () => {
           ></textarea>
         </div>
 
-        <div className="d-flex justify-content-end gap-2">
+        <div className="d-flex justify-content-end gap-3">
           <button
             type="button"
-            className="btn btn-outline-secondary"
+            className="btn btn-outline-secondary px-4"
             onClick={handleCancel}
           >
             Batal
           </button>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary px-4">
             Simpan
           </button>
         </div>

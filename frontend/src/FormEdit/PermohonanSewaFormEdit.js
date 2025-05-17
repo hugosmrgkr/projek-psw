@@ -3,16 +3,10 @@ import axios from 'axios';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 
 const PermohonanSewaFormEdit = () => {
-  const { id } = useParams(); // ambil id dari route param
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [jenisPermohonanOptions, setJenisPermohonanOptions] = useState([]);
-  const [tarifObjekRetribusiOptions, setTarifObjekRetribusiOptions] = useState([]);
-
-  const [form, setForm] = useState({
+  const initialFormState = {
     idJenisPermohonan: '',
     nomorSuratPermohonan: '',
     tanggalPengajuan: '',
@@ -20,216 +14,213 @@ const PermohonanSewaFormEdit = () => {
     alamatPemohon: '',
     idTarifObjekRetribusi: '',
     keterangan: ''
-  });
+  };
 
-  // Ambil data pilihan dropdown dan data permohonan sewa yg diedit
+  const [form, setForm] = useState(initialFormState);
+  const [jenisPermohonanOptions, setJenisPermohonanOptions] = useState([]);
+  const [tarifObjekRetribusiOptions, setTarifObjekRetribusiOptions] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    const fetchOptions = async () => {
+    const fetchDropdowns = async () => {
       try {
-        const jenisRes = await axios.get('http://localhost:8000/api/jenis-permohonan');
+        const [jenisRes, tarifRes] = await Promise.all([
+          axios.get('http://localhost:8000/api/jenis-permohonan'),
+          axios.get('http://localhost:8000/api/tarif-objek-retribusi'),
+        ]);
         setJenisPermohonanOptions(jenisRes.data.data || []);
-
-        const tarifRes = await axios.get('http://localhost:8000/api/tarif-objek-retribusi');
         setTarifObjekRetribusiOptions(tarifRes.data.data || []);
-      } catch (error) {
-        console.error('Gagal memuat opsi:', error);
+      } catch (err) {
+        console.error("Error loading dropdown data:", err);
       }
     };
 
-    const fetchPermohonan = async () => {
+    const fetchExistingData = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/api/permohonan-sewa/${id}`);
         if (res.data && res.data.data) {
-          const data = res.data.data;
+          const d = res.data.data;
           setForm({
-            idJenisPermohonan: data.idJenisPermohonan || '',
-            nomorSuratPermohonan: data.nomorSuratPermohonan || '',
-            tanggalPengajuan: data.tanggalPengajuan || '',
-            namaPemohon: data.namaPemohon || '',
-            alamatPemohon: data.alamatPemohon || '',
-            idTarifObjekRetribusi: data.idTarifObjekRetribusi || '',
-            keterangan: data.keterangan || ''
+            idJenisPermohonan: d.idJenisPermohonan || '',
+            nomorSuratPermohonan: d.nomorSuratPermohonan || '',
+            tanggalPengajuan: d.tanggalPengajuan || '',
+            namaPemohon: d.namaPemohon || '',
+            alamatPemohon: d.alamatPemohon || '',
+            idTarifObjekRetribusi: d.idTarifObjekRetribusi || '',
+            keterangan: d.keterangan || '',
           });
+        } else {
+          alert('Data tidak ditemukan');
+          navigate('/permohonansewa');
         }
       } catch (error) {
-        console.error('Gagal memuat data permohonan:', error);
-        alert('Data permohonan tidak ditemukan.');
+        console.error("Error loading permohonan data:", error);
+        alert('Gagal mengambil data permohonan.');
         navigate('/permohonansewa');
       }
     };
 
-    fetchOptions();
-    fetchPermohonan();
+    fetchDropdowns();
+    fetchExistingData();
   }, [id, navigate]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setIsSubmitting(true);
+    setErrors({});
 
     try {
       await axios.put(`http://localhost:8000/api/permohonan-sewa/${id}`, form);
-      setErrors({});
       navigate('/permohonansewa');
     } catch (error) {
-      if (error.response?.status === 422) {
+      if (error.response && error.response.status === 422) {
         setErrors(error.response.data.errors);
       } else {
-        console.error('Error submitting form:', error);
-        alert('Gagal menyimpan data. Silakan coba lagi.');
+        alert('Terjadi kesalahan saat menyimpan data.');
+        console.error(error);
       }
     } finally {
       setLoading(false);
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Edit Permohonan Sewa</h2>
-        <Link to="/permohonansewa" className="btn btn-secondary">Kembali</Link>
-      </div>
-
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-6">
-                {/* Jenis Permohonan */}
-                <div className="mb-3">
-                  <label htmlFor="idJenisPermohonan" className="form-label">Jenis Permohonan *</label>
-                  <select
-                    id="idJenisPermohonan"
-                    name="idJenisPermohonan"
-                    value={form.idJenisPermohonan}
-                    onChange={handleChange}
-                    className={`form-select ${errors.idJenisPermohonan ? 'is-invalid' : ''}`}
-                    disabled={isSubmitting}
-                    required
-                  >
-                    <option value="">Pilih Jenis Permohonan</option>
-                    {jenisPermohonanOptions.map((option) => (
-                      <option key={option.idJenisPermohonan || option.id} value={option.idJenisPermohonan || option.id}>
-                        {option.jenisPermohonan}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.idJenisPermohonan && <div className="invalid-feedback">{errors.idJenisPermohonan[0]}</div>}
-                </div>
-
-                {/* Nomor Surat */}
-                <div className="mb-3">
-                  <label className="form-label">Nomor Surat Permohonan</label>
-                  <input
-                    name="nomorSuratPermohonan"
-                    className="form-control"
-                    value={form.nomorSuratPermohonan}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.nomorSuratPermohonan && <div className="invalid-feedback d-block">{errors.nomorSuratPermohonan[0]}</div>}
-                </div>
-
-                {/* Tanggal */}
-                <div className="mb-3">
-                  <label className="form-label">Tanggal Pengajuan</label>
-                  <input
-                    type="date"
-                    name="tanggalPengajuan"
-                    className="form-control"
-                    value={form.tanggalPengajuan}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.tanggalPengajuan && <div className="invalid-feedback d-block">{errors.tanggalPengajuan[0]}</div>}
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                {/* Nama Pemohon */}
-                <div className="mb-3">
-                  <label className="form-label">Nama Pemohon</label>
-                  <input
-                    name="namaPemohon"
-                    className="form-control"
-                    value={form.namaPemohon}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.namaPemohon && <div className="invalid-feedback d-block">{errors.namaPemohon[0]}</div>}
-                </div>
-
-                {/* Alamat Pemohon */}
-                <div className="mb-3">
-                  <label className="form-label">Alamat Pemohon</label>
-                  <textarea
-                    name="alamatPemohon"
-                    className="form-control"
-                    value={form.alamatPemohon}
-                    onChange={handleChange}
-                    required
-                  ></textarea>
-                  {errors.alamatPemohon && <div className="invalid-feedback d-block">{errors.alamatPemohon[0]}</div>}
-                </div>
-              </div>
-            </div>
-
-            {/* Tarif dan Keterangan */}
-            <div className="row">
-              <div className="col-md-6">
-                <div className="mb-3">
-                  <label className="form-label">Tarif Objek Retribusi</label>
-                  <select
-                    name="idTarifObjekRetribusi"
-                    value={form.idTarifObjekRetribusi}
-                    onChange={handleChange}
-                    className="form-select"
-                    required
-                  >
-                    <option value="">Pilih Tarif Objek</option>
-                    {tarifObjekRetribusiOptions.map((option) => (
-                      <option
-                        key={option.idTarifObjekRetribusi}
-                        value={option.idTarifObjekRetribusi}
-                      >
-                        Rp {option.nominalTarif?.toLocaleString('id-ID')} - {option.namaPenilai || option.keterangan || '-'}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.idTarifObjekRetribusi && <div className="invalid-feedback d-block">{errors.idTarifObjekRetribusi[0]}</div>}
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="mb-3">
-                  <label className="form-label">Keterangan</label>
-                  <textarea
-                    name="keterangan"
-                    className="form-control"
-                    value={form.keterangan}
-                    onChange={handleChange}
-                    placeholder="Opsional"
-                  ></textarea>
-                  {errors.keterangan && <div className="invalid-feedback d-block">{errors.keterangan[0]}</div>}
-                </div>
-              </div>
-            </div>
-
-            {/* Buttons */}
-            <div className="d-flex justify-content-end gap-2">
-              <Link to="/permohonansewa" className="btn btn-outline-secondary">Batal</Link>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Menyimpan...' : 'Simpan'}
-              </button>
-            </div>
-          </form>
+    <div className="container mt-5">
+      <h3 className="mb-4">Edit Permohonan Sewa</h3>
+      <form onSubmit={handleSubmit}>
+        {/* Jenis Permohonan */}
+        <div className="mb-3">
+          <label htmlFor="idJenisPermohonan" className="form-label">Jenis Permohonan *</label>
+          <select
+            id="idJenisPermohonan"
+            name="idJenisPermohonan"
+            className={`form-select ${errors.idJenisPermohonan ? 'is-invalid' : ''}`}
+            value={form.idJenisPermohonan}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Pilih Jenis Permohonan --</option>
+            {jenisPermohonanOptions.map((opt) => (
+              <option key={opt.idJenisPermohonan} value={opt.idJenisPermohonan}>
+                {opt.jenisPermohonan}
+              </option>
+            ))}
+          </select>
+          {errors.idJenisPermohonan && <div className="invalid-feedback">{errors.idJenisPermohonan[0]}</div>}
         </div>
-      </div>
+
+        {/* Nomor Surat Permohonan */}
+        <div className="mb-3">
+          <label htmlFor="nomorSuratPermohonan" className="form-label">Nomor Surat Permohonan *</label>
+          <input
+            type="text"
+            id="nomorSuratPermohonan"
+            name="nomorSuratPermohonan"
+            className={`form-control ${errors.nomorSuratPermohonan ? 'is-invalid' : ''}`}
+            value={form.nomorSuratPermohonan}
+            onChange={handleChange}
+            required
+          />
+          {errors.nomorSuratPermohonan && <div className="invalid-feedback">{errors.nomorSuratPermohonan[0]}</div>}
+        </div>
+
+        {/* Tanggal Pengajuan */}
+        <div className="mb-3">
+          <label htmlFor="tanggalPengajuan" className="form-label">Tanggal Pengajuan *</label>
+          <input
+            type="date"
+            id="tanggalPengajuan"
+            name="tanggalPengajuan"
+            className={`form-control ${errors.tanggalPengajuan ? 'is-invalid' : ''}`}
+            value={form.tanggalPengajuan}
+            onChange={handleChange}
+            required
+          />
+          {errors.tanggalPengajuan && <div className="invalid-feedback">{errors.tanggalPengajuan[0]}</div>}
+        </div>
+
+        {/* Nama Pemohon */}
+        <div className="mb-3">
+          <label htmlFor="namaPemohon" className="form-label">Nama Pemohon *</label>
+          <input
+            type="text"
+            id="namaPemohon"
+            name="namaPemohon"
+            className={`form-control ${errors.namaPemohon ? 'is-invalid' : ''}`}
+            value={form.namaPemohon}
+            onChange={handleChange}
+            required
+          />
+          {errors.namaPemohon && <div className="invalid-feedback">{errors.namaPemohon[0]}</div>}
+        </div>
+
+        {/* Alamat Pemohon */}
+        <div className="mb-3">
+          <label htmlFor="alamatPemohon" className="form-label">Alamat Pemohon *</label>
+          <textarea
+            id="alamatPemohon"
+            name="alamatPemohon"
+            className={`form-control ${errors.alamatPemohon ? 'is-invalid' : ''}`}
+            rows={3}
+            value={form.alamatPemohon}
+            onChange={handleChange}
+            required
+          />
+          {errors.alamatPemohon && <div className="invalid-feedback">{errors.alamatPemohon[0]}</div>}
+        </div>
+
+        {/* Tarif Objek Retribusi */}
+        <div className="mb-3">
+          <label htmlFor="idTarifObjekRetribusi" className="form-label">Tarif Objek Retribusi *</label>
+          <select
+            id="idTarifObjekRetribusi"
+            name="idTarifObjekRetribusi"
+            className={`form-select ${errors.idTarifObjekRetribusi ? 'is-invalid' : ''}`}
+            value={form.idTarifObjekRetribusi}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Pilih Tarif --</option>
+            {tarifObjekRetribusiOptions.map((opt) => (
+              <option key={opt.idTarifObjekRetribusi} value={opt.idTarifObjekRetribusi}>
+                Rp {opt.nominalTarif?.toLocaleString('id-ID')} - {opt.keterangan || '-'}
+              </option>
+            ))}
+          </select>
+          {errors.idTarifObjekRetribusi && <div className="invalid-feedback">{errors.idTarifObjekRetribusi[0]}</div>}
+        </div>
+
+        {/* Keterangan */}
+        <div className="mb-3">
+          <label htmlFor="keterangan" className="form-label">Keterangan (Opsional)</label>
+          <textarea
+            id="keterangan"
+            name="keterangan"
+            className="form-control"
+            rows={3}
+            value={form.keterangan}
+            onChange={handleChange}
+            placeholder="Tambahkan keterangan jika perlu"
+          />
+        </div>
+
+        {/* Buttons */}
+        <div className="d-flex justify-content-end gap-2">
+          <Link to="/permohonansewa" className="btn btn-outline-secondary">Batal</Link>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Menyimpan...' : 'Simpan'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
